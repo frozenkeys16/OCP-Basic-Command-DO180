@@ -1,4 +1,4 @@
-<h1>Flow of Procedure of using</h1>
+<h2>Flow of Procedure of using "oc create deployment" "oc expose" and "oc expose services"</h2>
 
 ```
 oc create deployment db-pod --port 3306 \
@@ -968,7 +968,73 @@ Automatic nag-create ng bago.
 
 ---
 
+**Need bang ulitin ang oc expose deployment?**
 
+Hindi rin.
+
+Dahil existing na ang Service.
+
+Check:
+
+```
+oc get svc
+
+```
+nandiyan pa rin.
+
+
+---
+
+**Need bang ulitin ang oc expose service?**
+
+Hindi rin.
+
+Dahil existing pa rin ang Route.
+
+Check:
+
+```
+oc get route
+```
+
+nandiyan pa rin.
+
+---
+
+**Kailan lang mag-eexpose ulit?**
+**Scenario 1 - Binura ang Service**
+
+```
+oc delete svc myapp
+
+```
+Kailangan mo ulit:
+
+```
+oc expose deployment myapp
+
+```
+para makagawa ulit ng Service.
+
+---
+
+**Scenario 2 - Binura ang Route**
+
+
+```
+
+oc delete route myapp
+
+```
+Kailangan mo ulit:
+
+```
+oc expose service myapp
+```
+
+para makagawa ng panibagong Route.
+
+---
 
 
 
