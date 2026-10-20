@@ -181,6 +181,7 @@ oc create job backup-job \
   -- /bin/bash -c "backup.sh"
 
 ```
+
 Mangyayari:
 
 ```
@@ -193,6 +194,7 @@ Stop
 ---
 
 <h3>CronJob</h3>
+
 ```
 apiVersion: batch/v1
 kind: CronJob
@@ -233,10 +235,12 @@ Sa example mo, ang date-loop ay Job lang, kaya hindi ito scheduled tulad ng Cron
 for i in {1..30}; do date; done
 
 ```
+
 pagkatapos ay magiging status na:
 
 ```
 Completed
+
 ```
 at tapos na ang Job.
 
