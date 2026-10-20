@@ -23,6 +23,127 @@ oc expose deployment/db-pod
 
 ---
 
+<h2<PALIWANAG sa mga Command ng  oc expose deployment, service</h2>
+
+**Maraming nalilito sa Deployment at Service dahil parehong tungkol sila sa application, pero magkaiba ang trabaho nila.**
+
+**Una: Ano ang nangyayari sa oc create deployment?**
+
+Halimbawa:
+
+```
+oc create deployment db-pod --image=mysql
+
+```
+
+Gagawa ito ng:
+
+```
+
+Deployment
+   |
+ReplicaSet
+   |
+Pod
+
+```
+
+Maaari mong tingnan:
+
+```
+oc get deployment
+oc get rs
+oc get pods
+
+```
+Output:
+
+```
+NAME
+db-pod
+
+```
+
+Ang Deployment ang bahala sa:
+
+- Pag-create ng Pods
+- Self-healing
+- Scaling
+- Rolling updates
+
+Pero tandaan:
+
+✅ May Pod na
+❌ Wala pang Service
+
+---
+
+
+**Bakit kailangan pa ng Service?**
+
+Problema:
+
+Kapag namatay ang Pod:
+
+```
+db-pod-12345
+IP: 10.128.0.5
+
+```
+at ni-recreate ni Deployment:
+
+```
+db-pod-67890
+IP: 10.128.0.8
+
+```
+
+Nagbago ang IP.
+
+Kung application mo ay kumokonekta sa:
+
+```
+10.128.0.5
+
+```
+
+babagsak ito pagkatapos ma-recreate ang Pod.
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 **First Proceudure:**
 
 1. Log in to the OpenShift cluster.
