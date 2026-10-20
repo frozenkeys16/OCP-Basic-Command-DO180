@@ -612,10 +612,53 @@ Ito ang ginagamit para hanapin ang tamang Pod.
 ---
 
 
+<h3>Ano naman ang selector?</h3>h3>
 
+Sa screenshot mo:
 
+```
+oc get service db-pod -o wide
 
+```
+Output:
 
+```
+SELECTOR
+app=db-pod
+
+```
+
+Ibig sabihin:
+
+```
+Service
+   |
+   | hanapin lahat ng Pods
+   | na may label na
+   |
+app=db-pod
+
+```
+Check mo:
+
+```
+oc get pods --show-labels
+
+```
+
+Makikita mo:
+
+```
+NAME                   LABELS
+db-pod-xxxxxx          app=db-pod
+
+```
+
+Kaya alam ni Service kung aling Pod ang papadalhan ng traffic.
+
+---
+
+**Paano makita ang endpoint?**
 
 
 
