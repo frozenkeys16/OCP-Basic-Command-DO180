@@ -1111,6 +1111,237 @@ Kapag Pod lang ang bumagsak, kadalasan wala kang gagawin. Automatic itong ire-re
 
 
 
+---
+
+Depende kung ano talaga ang ibig mong sabihin sa "bagong app".
+
+**Scenario 1: Bagong App, Parehong Service**
+
+Halimbawa:
+
+May Service ka na:
+
+```
+Service: myapp
+IP: 172.30.10.100
+
+```
+Nakakonekta ito sa Pod A:
+
+```
+myapp-v1
+```
+
+Kapag nag-deploy ka ng bagong version:
+
+```
+myapp-v2
+
+```
+at pareho pa rin ang labels:
+
+```
+labels:
+  app: myapp
+
+```
+Hindi mo kailangang gumawa ng bagong Service.
+
+Mangyayari:
+
+```
+Service (172.30.10.100)
+         |
+         +-- myapp-v2
+
+```
+Pareho pa rin ang Service IP.
+
+---
+
+**Scenario 2: Maraming Replica ng Isang App**
+
+```
+oc scale deployment myapp --replicas=3
+
+```
+Result:
+
+```
+myapp-1
+myapp-2
+myapp-3
+
+```
+Iisa pa rin ang Service:
+
+```
+Service: myapp
+IP: 172.30.10.100
+
+```
+
+Naglo-load balance lang si Service:
+
+```
+Client
+  |
+Service
+  |
+  +-- Pod1
+  +-- Pod2
+  +-- Pod3
+
+```
+
+---
+
+**Scenario 3: Ibang Application**
+
+May MySQL ka:
+
+```
+Deployment: mysql
+Service: mysql
+IP: 172.30.10.100
+```
+Tapos magde-deploy ka ng Grafana:
+
+```
+Deployment: grafana
+```
+
+Hindi dapat gamitin ni Grafana ang Service ng MySQL.
+
+Kailangan ng sariling Service:
+
+```
+oc expose deployment grafana
+
+```
+Result:
+
+```
+mysql Service   -> 172.30.10.100
+grafana Service -> 172.30.50.200
+
+```
+Magkaibang application, magkaibang Service.
+
+---
+
+
+**Scenario 4: Gusto Mong Ikonekta ang App sa Existing MySQL Service**
+
+Halimbawa:
+
+```
+mysql Service
+IP: 172.30.10.100
+DNS: mysql
+
+```
+at may bagong application:
+
+```
+inventory-app
+
+```
+
+Sa application configuration:
+
+```
+DB_HOST=mysql
+
+```
+
+
+o
+
+```
+mysql:3306
+```
+
+Hindi mo gagalawin ang Service.
+
+Hindi ka mag-eexpose ulit.
+
+Gagamitin mo lang ang existing Service name:
+
+```
+mysql
+
+```
+
+Dahil may internal DNS ang OpenShift.
+
+---
+
+Enterprise Best Practice
+
+Huwag gamitin ang ClusterIP mismo:
+
+```
+172.30.10.100
+
+```
+Dahil maaaring magbago kung ma-delete at ma-recreate ang Service.
+
+Mas magandang gamitin ang:
+
+```
+mysql
+
+```
+o
+```
+mysql.mynamespace.svc.cluster.local
+```
+
+Halimbawa
+
+```
+
+env:
+- name: DB_HOST
+  value: mysql
+
+
+```
+
+---
+
+
+Simpleng Rule
+
+✅ Parehong application/version update lang → gamitin ang existing Service.
+✅ Bagong application na kokonekta sa database → gamitin ang existing Service name ng database.
+✅ Bagong application na may sariling access point → gumawa ng sariling Service (oc expose deployment).
+❌ Huwag itali ang application sa ClusterIP address kung maaari.
+
+Sa production OpenShift, karaniwan ang application ay kumokonekta sa Service name (DNS) tulad ng:
+
+```
+mysql:3306
+postgresql:5432
+grafana:3000
+
+```
+at hindi direkta sa ClusterIP address.
+
+
+---
+
+
+
+
+
+
+
+
+
+
+
 
 
 
