@@ -660,6 +660,204 @@ Kaya alam ni Service kung aling Pod ang papadalhan ng traffic.
 
 **Paano makita ang endpoint?**
 
+```
+oc get endpoints db-pod
+
+```
+
+Halimbawa:
+
+```
+NAME     ENDPOINTS
+db-pod   10.128.0.15:3306
+
+```
+
+Ibig sabihin:
+
+```
+db-pod Service
+      |
+      +--> 10.128.0.15:3306
+
+```
+
+---
+
+**Mga madalas gamitin na expose**
+**Expose Deployment**
+
+```
+oc expose deployment myapp
+
+```
+**Gagawa ng Service.**
+
+---
+
+**Expose Service**
+
+```
+
+oc expose service myapp
+
+```
+
+Sa OpenShift, madalas itong gumagawa ng:
+
+```
+Route
+
+```
+
+para ma-access mula browser.
+
+Makikita:
+
+```
+oc get routes
+
+```
+
+---
+
+
+<h2>Madaling Tandaan</h2>
+
+```
+Deployment
+    |
+    +--> Creates Pods
+
+Service
+    |
+    +--> Creates stable IP/DNS to Pods
+
+Route (OpenShift)
+    |
+    +--> Access application from outside cluster
+
+```
+Karaniwang flow sa OpenShift:
+
+```
+oc create deployment
+        |
+        v
+      Pod
+
+oc expose deployment
+        |
+        v
+     Service
+
+oc expose service
+        |
+        v
+      Route
+
+```
+
+Kaya ang oc expose deployment/db-pod ay hindi gumagawa ng panibagong Pod o Deployment. Ang ginagawa lang nito ay gumawa ng Service (ClusterIP) para magkaroon ng permanenteng network name ang Deployment at mga Pods nito.
+
+---
+
+
+
+**Dito madalas nalilito ang mga nagsisimula sa OpenShift/Kubernetes.**
+
+<h2>Flow ng Application sa OpenShift</h2>
+
+```
+Deployment
+    |
+    v
+   Pod
+    |
+    v
+ Service (ClusterIP)
+    |
+    v
+ Route (OpenShift)
+
+
+```
+
+**Step 1 - Create Deployment**
+
+```
+
+oc create deployment myapp --image=myimage
+
+```
+
+Result:
+
+```
+Deployment
+   |
+   +-- Pod
+
+```
+
+May running application ka na, pero sa loob lang ng Pod.
+
+---
+
+**Step 2 - Expose Deployment**
+
+```
+oc expose deployment myapp
+
+```
+Result:
+
+```
+Service
+
+```
+
+Makikita:
+
+```
+oc get svc
+
+```
+Output:
+
+```
+NAME    TYPE
+myapp   ClusterIP
+
+```
+
+Ngayon, pwede nang tawagin ng ibang Pods ang application gamit ang:
+
+```
+Ngayon, pwede nang tawagin ng ibang Pods ang application gamit ang:
+
+```
+myapp:8080
+
+```
+sa halip na Pod IP.
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
