@@ -879,6 +879,94 @@ http://myapp.apps.ocp.lab.local
 ```
 ---
 
+<h2>Bakit hindi direkta Deployment → Route?</h2>
+
+Dahil ang Route ay tumuturo sa Service.
+
+Ganito ang chain:
+
+```
+User
+  |
+Route
+  |
+Service
+  |
+Pod
+
+
+```
+Hindi:
+
+```
+User
+  |
+Route
+  |
+Pod
+
+```
+---
+
+
+Kapag bumagsak ang Pod
+
+Halimbawa:
+
+```
+myapp-pod
+IP=10.128.0.5
+
+```
+namatay.
+
+Automatic na gagawa si Deployment ng bago:
+
+```
+myapp-pod-new
+IP=10.128.0.15
+
+```
+
+Pero:
+
+```
+Service = same
+Route = same
+
+```
+Hindi mo kailangang mag-expose ulit.
+
+---
+
+**Need bang gumawa ulit ng Deployment?**
+
+Hindi.
+
+Si Deployment ang bahala sa self-healing.
+
+Example:
+
+```
+oc delete pod myapp-xxxxx
+
+```
+
+Pagkatapos
+
+```
+oc get pods
+```
+
+Makikita:
+
+```
+myapp-yyyyy Running
+
+```
+Automatic nag-create ng bago.
+
+---
 
 
 
