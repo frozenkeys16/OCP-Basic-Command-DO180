@@ -844,6 +844,40 @@ sa halip na Pod IP.
 
 ---
 
+**Step 3 - Expose Service**
+
+```
+oc expose service myapp
+
+```
+
+Result:
+
+```
+Route
+
+```
+
+Makikita:
+
+```
+oc get routes
+
+```
+Output:
+
+```
+NAME    HOST/PORT
+myapp   myapp.apps.ocp.lab.local
+
+```
+Ngayon pwede nang i-access mula browser:
+
+```
+http://myapp.apps.ocp.lab.local
+
+```
+---
 
 
 
