@@ -1034,6 +1034,87 @@ para makagawa ng panibagong Route.
 
 ---
 
+**Scenario 3 - Binura ang Deployment**
+
+```
+oc delete deployment myapp
+
+```
+Mawawala:
+
+```
+Deployment
+Pods
+```
+Pero maaaring maiwan ang:
+
+```
+Service
+Route
+
+```
+
+Subalit wala silang tinuturo na Pod.
+
+Kailangan mong mag-create ulit ng Deployment.
+
+---
+
+**Totoong Enterprise Flow**
+
+Karaniwan sa production:
+
+```
+Deployment
+Service
+Route
+
+```
+ginagawa sa YAML.
+
+```
+oc apply -f app.yaml
+```
+
+Hindi na isa-isang:
+
+```
+oc create deployment
+oc expose deployment
+oc expose service
+
+```
+Ginagamit lang ito kadalasan sa:
+
+- Training
+- Lab
+- Testing
+- Quick deployment
+
+
+---
+
+Madaling Tandaan
+
+Resource:                              Trabaho:
+Deployment                             Gumagawa at nagma-manage ng Pods
+Pod                                    Actual application container
+Service                                Stable IP/DNS para sa Pods
+Route                                  External access mula browser
+expose deployment                      Gumagawa ng Service
+expose service                         Gumagawa ng Route
+
+---
+
+Kapag Pod lang ang bumagsak, kadalasan wala kang gagawin. Automatic itong ire-recover ng Deployment, at patuloy na gagana ang existing na Service at Route. Hindi mo na kailangang mag-expose o mag-create muli ng Deployment.
+
+
+
+
+
+
+
+
 
 
 
