@@ -451,6 +451,198 @@ echo "Connection failed"
 ```
 ---
 
+**Kaya ginawa ang Service**
+
+Service = Permanent DNS Name + Load Balancer
+
+Example:
+
+```
+Service Name: db-pod
+ClusterIP: 172.30.108.92
+
+```
+Application:
+
+```
+mysql://db-pod:3306
+```
+
+Hindi na kailangang alamin ang Pod IP.
+
+---
+
+**Ano ang ginagawa ng command na ito?**
+
+```
+oc expose deployment/db-pod
+
+```
+
+Sinasabi nito:
+
+```
+Gumawa ng Service para sa Deployment na db-pod.
+```
+Results:
+
+```
+Deployment ---> Pod
+
+Service -----> Pod
+
+```
+
+Makikita:
+
+```
+oc get svc
+```
+Output:
+
+```
+NAME    TYPE        CLUSTER-IP
+db-pod  ClusterIP   172.30.108.92
+
+```
+
+---
+
+**Hindi ba iisa lang sila?**
+
+Hindi.
+
+**Deployment**
+
+Nagma-manage ng Pods.
+
+```
+Deployment
+    |
+    +-- Pod
+
+```
+---
+
+**Service**
+
+Nagbibigay ng stable network access.
+
+```
+Service
+    |
+    +-- Pod
+
+```
+---
+
+**Example sa totoong buhay**
+**Walang Service**
+```
+App ----> 10.128.0.5
+
+```
+
+Kapag nag-restart:
+
+```
+10.128.0.5 ❌
+
+new IP:
+10.128.0.8
+
+```
+Connection failed.
+
+---
+
+
+**May Service**
+
+```
+App ----> db-pod
+
+```
+
+Kahit magbago:
+
+```
+10.128.0.5
+10.128.0.8
+10.128.0.15
+```
+gumagana pa rin dahil si Service ang naghahanap ng Pod.
+
+---
+
+**Ano ang ginawa ng oc expose sa ilalim?**
+
+Kapag ginawa mo:
+
+```
+oc expose deployment/db-pod
+```
+Parang gumawa ito ng YAML:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-pod
+spec:
+  selector:
+    app: db-pod
+  ports:
+  - port: 3306
+    targetPort: 3306
+
+
+```
+
+Pansinin ang:
+
+```
+selector:
+  app: db-pod
+
+```
+
+Ito ang ginagamit para hanapin ang tamang Pod.
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
