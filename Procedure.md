@@ -834,12 +834,10 @@ myapp   ClusterIP
 Ngayon, pwede nang tawagin ng ibang Pods ang application gamit ang:
 
 ```
-Ngayon, pwede nang tawagin ng ibang Pods ang application gamit ang:
-
-```
 myapp:8080
 
 ```
+
 sa halip na Pod IP.
 
 ---
