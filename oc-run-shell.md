@@ -286,8 +286,56 @@ May test machine ka sa loob ng cluster
 ```
 ---
 
+**Hakbang 4**
+
+Subukan ang DNS
+
+```
+nslookup db-pod
+
+```
+
+Result:
+
+```
+Gumagana ba ang internal DNS?
+
+```
+
+---
+
+Simpleng Analogy
+
+Isipin mo:
+
+```
+
+Pod = Bahay
+Service = Pangalan ng Bahay
+EndpointSlice = Listahan ng eksaktong address ng bahay
+oc run shell = Bisitang susubok pumunta sa bahay
 
 
+```
+
+Ang goal ng exercise ay tiyakin na:
+
+```
+Service Name
+     ↓
+DNS
+     ↓
+EndpointSlice
+     ↓
+Pod IP
+     ↓
+Application
+
+```
+
+ay lahat gumagana nang tama. Ito ang isa sa pinakaimportanteng troubleshooting flow sa OpenShift kapag sinisiyasat mo kung bakit hindi makakonekta ang isang application sa isa pang application o database.
+
+---
 
 
 
