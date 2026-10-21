@@ -51,6 +51,8 @@ Ang trabaho niya ay routing ng external connections papasok sa cluster.
 
 Halimbawa:
 
+May service ka:
+
 ```
 sakila-svc
 
@@ -69,8 +71,20 @@ kailangan mo ng Ingress o Route.
 
 ---
 
+**3. Ano ang pagkakaiba ng Service at Ingress?**
+**Service**
+```
+ClusterIP
+172.30.x.x
 
-May service ka:
+```
+
+Pang-loob lang ng cluster.
+
+```
+Pod A ---> Service ---> Pod B
+```
+
 
 
 
