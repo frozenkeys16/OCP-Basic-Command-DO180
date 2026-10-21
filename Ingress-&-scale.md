@@ -413,7 +413,6 @@ Ingress
 
 Nagbibigay ng access mula sa labas.
 
-```
 ---
 
 Pwede kang mag-scale kahit walang Ingress.
