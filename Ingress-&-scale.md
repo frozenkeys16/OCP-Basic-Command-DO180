@@ -354,6 +354,141 @@ oc scale deployment sakila-app --replicas=3
 ```
 Magiging:
 
+```
+Pod1 10.8.0.10
+Pod2 10.8.0.11
+Pod3 10.8.0.12
+
+```
+EndpointSlice:
+
+```
+10.8.0.10
+10.8.0.11
+10.8.0.12
+
+```
+
+Service:
+
+```
+sakila-svc
+```
+
+---
+
+Kapag may request:
+
+```
+curl http://sakila-svc
+
+```
+
+Service:
+
+```
+Request1 -> Pod1
+Request2 -> Pod2
+Request3 -> Pod3
+```
+Naglo-load balance siya.9. Kailangan ba ang Ingress para mag-scale?
+
+❌ Hindi.
+
+Magkaibang bagay sila.
+
+Scale
+
+Dinadagdagan ang Pods.
+
+
+```
+oc scale deployment sakila-app --replicas=3
+
+```
+
+---
+
+Ingress
+
+Nagbibigay ng access mula sa labas.
+
+```
+---
+
+Pwede kang mag-scale kahit walang Ingress.
+
+Pwede ka ring may Ingress kahit isang Pod lang.
+
+
+---
+
+Madaling Tandaan
+Internal Communication
+
+```
+Pod
+ |
+ v
+Service
+```
+
+External Communication
+
+```
+User
+ |
+ v
+Ingress / Route
+ |
+ v
+Service
+ |
+ v
+Pods
+
+```
+High Availability
+
+```
+Deployment
+ |
+ +--> Pod1
+ +--> Pod2
+ +--> Pod3
+
+ ```
+Load Balancing
+
+```
+
+Service
+ |
+ +--> Pod1
+ +--> Pod2
+ +--> Pod3
+
+ ```
+
+---
+
+Simple rule:
+
+ - Deployment = gumagawa ng Pods
+ - Scale = dumadami o nababawasan ang Pods
+ - Service = stable IP/DNS ng Pods
+ - EndpointSlice = listahan ng Pod IPs
+ - Ingress/Route = daan mula sa labas papunta sa Service
+ - Router = tumatanggap ng request at sumusunod sa Route/Ingress
+ - Pod = actual na tumatakbong application
+
+Kaya ang sagot sa tanong mo:
+
+✅ Oo, ang pangunahing purpose ng Ingress/Route ay connection at routing ng traffic mula sa labas papasok sa Service. Hindi ito para gumawa ng Pods o mag-load balance ng replicas. Ang pag-scale ay trabaho ng Deployment, at ang Service ang magdi-distribute ng traffic sa mga Pods na ginawa ng scale.
+
+
+
+---
 
 
 
