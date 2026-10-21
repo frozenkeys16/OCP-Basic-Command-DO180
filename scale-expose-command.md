@@ -447,6 +447,141 @@ Pod
 
 **Example**
 
+Puwedeng magkaiba:
+
+```
+oc expose deployment satir-app \
+ --port=80 \
+ --target-port=8080
+
+```
+
+Result:
+
+```
+Service :80
+   |
+   v
+Pod :8080
+
+```
+
+---
+
+**4. EndpointSlice**
+
+Command:
+
+```
+oc get endpointslices
+
+```
+
+Output:
+
+```
+NAME              PORTS   ENDPOINTS
+satir-svc-c5h59   8080    10.8.0.126
+
+```
+---
+
+**Ito ang pinakaimportanteng bahagi**
+
+Ang EndpointSlice ang nagsasabi:
+
+```
+"Anong pod ang dadaanan ng service?"
+
+```
+
+Sa halimbawa:
+
+```
+Service
+satir-svc
+
+```
+nakaturo sa:
+
+```
+10.8.0.126
+```
+
+na siyang Pod IP.
+
+---
+
+
+**Diagram**
+
+```
+Service
+satir-svc
+172.30.27.59
+      |
+      |
+      v
+EndpointSlice
+10.8.0.126:8080
+      |
+      |
+      v
+Pod
+satir-app-787b7-xxxx
+
+```
+
+---
+
+**5. Saan nakatutok ang EndpointSlice?**
+
+Makikita rin sa:
+
+```
+oc get pods -o wide
+
+```
+Output:
+
+```
+NAME                    IP
+satir-app-787b7-dfsh    10.8.0.126
+
+```
+
+At EndpointSlice:
+
+```
+10.8.0.126
+
+```
+Pareho.
+
+Kaya masasabi nating:
+
+✅ EndpointSlice → Pod IP
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
