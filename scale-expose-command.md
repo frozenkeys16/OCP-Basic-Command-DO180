@@ -289,6 +289,17 @@ curl satir-web-applications.apps.lab.example.com; done
 
 ---
 
+Tanong: maari mo bang ipaliwanag lahat ng command na ito at para saan ito lalo na rin ang endpoint saan ito nakatutok? pag katapos ma expose at naging services meaning ang endpointslices is na ka point na sa pods palabas?
+
+
+Answer:
+
+Oo, tama ang direction ng pag-intindi mo. Ipaliwanag natin step-by-step kung paano nagkakabit-kabit ang Deployment → Pod → Service → EndpointSlice.
+
+
+
+
+
 
 
 
