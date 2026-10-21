@@ -659,12 +659,94 @@ Ito ang load balancing.
 
 ---
 
+**8. Paano nalalaman ng Service kung anong Pod ang kukunin?**
+
+Dahil sa labels.
+
+Deployment:
+
+```
+labels:
+  app: satir-app
+
+```
+Pod:
+
+```
+labels:
+  app: satir-app
+
+```
+
+Service:
+
+```
+selector:
+  app: satir-app
+
+```
+
+Flow:
+
+```
+Service Selector
+       |
+       v
+Hanapin lahat ng Pod na may
+app=satir-app
+       |
+       v
+Gumawa ng EndpointSlice
+       |
+       v
+Ilista lahat ng Pod IP
 
 
+```
 
+---
 
+**Buong Daloy**
 
+```
+Deployment
+satir-app
+     |
+     v
+Pod
+10.8.0.126
+     |
+     | (matching labels)
+     v
+Service
+satir-svc
+172.30.27.59:8080
+     |
+     v
+EndpointSlice
+10.8.0.126:8080
+     |
+     v
+Container
+8080
 
+```
+---
+
+**Madaling tandaan**
+ - Deployment = gumagawa ng Pods
+ - Pod = tumatakbong application
+ - Service = permanenteng IP/DNS para sa Pods
+ - EndpointSlice = listahan ng Pod IPs na ginagamit ng Service
+ - TargetPort = port ng application sa Pod
+ - Port = port ng Service
+ - ClusterIP = virtual IP ng Service
+
+Kaya ang sagot sa tanong mo:
+
+"Pagkatapos ma-expose at naging service meaning ang EndpointSlice ay nakapoint na sa pods palabas?"
+
+✅ Oo. Ang EndpointSlice ang naglalaman ng actual Pod IPs na pinupuntahan ng Service. Hindi diretsong kumakausap ang Service sa Deployment, kundi sa mga Pod IP na nakalista sa EndpointSlice.
 
 
 
