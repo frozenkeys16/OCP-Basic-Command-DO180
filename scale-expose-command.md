@@ -606,9 +606,58 @@ Dahil ginagamit ng Service ang EndpointSlice para malaman kung saan niya ipapada
 
 ---
 
+**7. Bakit kailangan pa ang EndpointSlice?**
+
+Halimbawa may 3 replicas ka:
+
+```
+oc scale deployment satir-app --replicas=3
+
+```
+
+Magiging:
+
+```
+Pod1 10.8.0.126
+Pod2 10.8.0.130
+Pod3 10.8.0.140
+
+```
+
+EndpointSlice:
+
+```
+10.8.0.126
+10.8.0.130
+10.8.0.140
+
+```
+
+Service:
+
+```
+172.30.27.59
+
+```
+
+Kapag may request:
+
+```
+172.30.27.59:8080
+
+```
+pipili ang Service ng isa sa mga Pod.
 
 
+```
+Request1 --> Pod1
+Request2 --> Pod2
+Request3 --> Pod3
 
+```
+Ito ang load balancing.
+
+---
 
 
 
