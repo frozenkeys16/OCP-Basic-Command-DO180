@@ -211,6 +211,152 @@ doon niya ipapasa.
 
 ---
 
+**6. Ano naman ang curl test?**
+
+Screenshot:
+
+```
+curl ingr-sakila.apps.lab.example.com
+
+```
+
+Output:
+
+```
+Welcome to Red Hat Training,
+from sakila-app-66947cdd78-x5kpd
+
+```
+
+Ibig sabihin:
+
+✅ Gumagana ang DNS
+✅ Gumagana ang Ingress
+✅ Gumagana ang Service
+✅ Nakaabot sa Pod
+
+---
+
+Flow:
+
+```
+curl
+ |
+ v
+Ingress
+ |
+ v
+Service
+ |
+ v
+Pod
+
+```
+
+---
+
+7. Ano naman ang Scale?
+
+Command:
+
+```
+oc scale deployment sakila-app --replicas=2
+
+```
+
+---
+
+Before
+
+```
+sakila-app
+   |
+   v
+1 Pod
+
+```
+
+---
+
+
+After
+
+```
+
+sakila-app
+   |
+   +--> Pod1
+   |
+   +--> Pod2
+``
+
+```
+
+Dalawang magkaparehong application instance.
+
+---
+
+Bakit nag-scale?
+
+Para sa:
+
+High Availability
+
+Kapag namatay:
+
+```
+Pod1
+```
+may
+
+```
+Pod2
+
+```
+
+parin
+
+---
+
+Load Balancing
+
+Kung maraming users.
+
+```
+100 Users
+
+```
+Sa halip na 
+
+```
+100 -> Pod1
+
+```
+nagiging
+
+```
+50 -> Pod1
+50 -> Pod2
+
+```
+
+---
+
+8. Paano nakakatulong ang Service kapag nag-scale?
+
+Halimbawa:
+
+
+```
+
+oc scale deployment sakila-app --replicas=3
+
+```
+Magiging:
+
+
+
+
 
 
 
