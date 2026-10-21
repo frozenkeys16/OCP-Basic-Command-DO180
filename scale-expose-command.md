@@ -359,6 +359,7 @@ Pag nag:
 oc get svc
 
 ```
+
 Makikita
 
 ```
@@ -368,7 +369,7 @@ satir-svc   ClusterIP  172.30.27.59    8080
 ```
 ---
 
-Ano ang ClusterIP?
+**Ano ang ClusterIP?**
 
 Ito ang virtual IP ng service.
 
@@ -383,7 +384,6 @@ Hindi ito IP ng pod.
 
 Ito ay IP ng Service.
 
-```
 ---
 
 **Flow**
