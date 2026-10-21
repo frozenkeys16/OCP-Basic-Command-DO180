@@ -297,6 +297,161 @@ Answer:
 Oo, tama ang direction ng pag-intindi mo. Ipaliwanag natin step-by-step kung paano nagkakabit-kabit ang Deployment → Pod → Service → EndpointSlice.
 
 
+---
+
+<h3> 1. Expose Deployment</h3>
+
+Command:
+
+```
+oc expose deployment satir-app \
+  --name satir-svc \
+  --port 8080 \
+  --target-port 8080
+
+```
+
+**Ano ang ginagawa nito?**
+
+May existing ka nang Deployment:
+
+```
+satir-app
+```
+at may pod na ginawa nito:
+
+```
+satir-app-787b7-xxxx
+
+```
+Kapag nag:
+
+```
+oc expose deployment satir-app
+
+```
+
+gumagawa si OpenShift ng Service para sa deployment.
+
+Parang sinasabi mo:
+
+```
+"Gawan mo ng permanenteng address ang mga pod ng deployment na ito."
+
+```
+
+---
+<h3>Resulta</h3>
+
+Nagkaroon ng Service:
+
+```
+satir-svc
+
+```
+---
+
+**2. Service**
+
+Pag nag:
+
+```
+oc get svc
+
+```
+Makikita
+
+```
+NAME        TYPE       CLUSTER-IP      PORT
+satir-svc   ClusterIP  172.30.27.59    8080
+
+```
+---
+
+Ano ang ClusterIP?
+
+Ito ang virtual IP ng service.
+
+Halimbawa:
+
+```
+172.30.27.59
+
+```
+
+Hindi ito IP ng pod.
+
+Ito ay IP ng Service.
+
+```
+---
+
+**Flow**
+
+```
+User
+  |
+  v
+Service IP
+172.30.27.59
+  |
+  v
+Pod
+10.8.0.126
+
+```
+Kapag kumonekta ka sa:
+
+```
+172.30.27.59:8080
+
+```
+ireredirect ka ng Service papunta sa Pod.
+
+---
+
+**3. Port vs TargetPort**
+
+Command
+
+```
+--port 8080
+--target-port 8080
+
+```
+
+---
+
+**Port**
+
+Ito ang port ng Service.
+
+```
+Service
+172.30.27.59:8080
+
+```
+---
+
+**Target Port**
+
+Ito ang port sa loob ng container.
+
+```
+Pod
+10.8.0.126:8080
+
+```
+
+---
+
+**Example**
+
+
+
+
+
+
 
 
 
