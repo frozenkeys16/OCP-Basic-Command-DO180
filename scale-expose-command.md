@@ -112,6 +112,91 @@ oc expose service satir-svc --name satir
 
 ```
 
+```
+oc get routes
+
+```
+
+3.2 Create an ingress object named ingr-sakila for the sakila-svc service. Configure the --rule option with the following values:
+
+```
+**Field**        **Value**
+Host             ingr-sakila.apps.lab.example.com
+Service name     sakila-svc
+Port number      8080
+```
+```
+oc create ingress ingr-sakila \
+--rule "ingr-sakila.apps.lab.example.com/*=sakila-svc:8080"
+```
+```
+oc get ingress
+```
+
+3.3 Confirm that a route exists for the ingr-sakila ingress object.
+
+```
+oc get routes
+
+```
+A specific port is not assigned to routes that ingress objects created. By contrast, a route that an exposed service created is assigned the same ports as the service.
+
+3.4 Use the curl command to access the ingr-sakila ingress object and the satir route. The output states the name of the pod that is servicing the request.
+
+
+```
+ curl ingr-sakila.apps.lab.example.com
+```
+
+```
+curl satir-web-applications.apps.lab.example.com
+```
+
+
+4. Scale the web application deployments to load-balance their services. Scale the sakila-app deployment to two replicas, and scale the satir-app deployment to three replicas.
+
+4.1 Scale the sakila-app deployment with two replicas.
+
+```
+oc scale deployment sakila-app --replicas 2
+
+```
+
+4.2 Wait a few moments and then verify the status of the replica pods. The output confirms that the sakila-app deployment is scaled to two replicas.
+
+
+```
+oc get pods
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
