@@ -169,6 +169,141 @@ oc scale deployment sakila-app --replicas 2
 oc get pods
 ```
 
+4.3 Scale the satir-app deployment with three replicas.
+
+```
+oc scale deployment satir-app --replicas 3
+
+```
+
+4.4 Wait a few moments and then verify the status of the replica pods. The output confirms that the satir-app deployment is scaled to three replicas.
+
+
+```
+oc get pods -o wide
+
+```
+
+
+4.5 Retrieve the service endpoints to confirm that the services are load-balanced between the additional replica pods.
+
+```
+oc get endpointslices
+
+```
+
+<h3>5. Enable the sticky sessions for the sakila-app web application. Then, use the curl command to confirm that the sticky sessions are working for the ingr-sakila object.</h3>
+
+5.1 Configure a cookie for the ingr-sakila ingress object.
+
+```
+ oc annotate ingress ingr-sakila \
+ingress.kubernetes.io/affinity=cookie
+```
+5.2 Use the curl command to access the ingr-sakila ingress object. The output states the name of the pod that is servicing the request. Notice that the connection is load-balanced between the two replicas.
+
+```
+for i in {1..10}; do \
+curl ingr-sakila.apps.lab.example.com ; done
+
+```
+
+5.3 Use the curl command to save the ingr-sakila ingress object cookie to the /tmp/cookie_jar file.
+
+```
+curl ingr-sakila.apps.lab.example.com \
+-c /tmp/cookie_jar
+```
+
+5.4 Confirm that the cookie exists in the /tmp/cookie_jar file.
+
+```
+cat /tmp/cookie_jar
+
+```
+
+5.5 The cookie provides session stickiness for connections to the ingr-sakila route. Use the curl command and the cookie in the /tmp/cookie_jar file to connect to the ingr-sakila route again. Confirm that you are connected to the same pod that handled the request in the previous step.
+
+
+```
+for i in {1..10}; do \
+curl ingr-sakila.apps.lab.example.com -b /tmp/cookie_jar; done
+
+```
+
+5.6 Use the curl command to connect to the ingr-sakila route without the cookie. Observe that session stickiness occurs only when you supply the stored cookie.
+
+```
+for i in {1..10}; do \
+curl ingr-sakila.apps.lab.example.com ; done
+
+```
+
+6. Enable the sticky sessions for the satir-app web application. Then, use the curl command to confirm that sticky sessions are active for the satir route.
+
+ 6.1 Configure a cookie with the hello value for the satir route.
+
+```
+oc annotate route satir \
+router.openshift.io/cookie_name="hello"
+
+```
+
+6.2 Use the curl command to access the satir route. The output states the name of the pod that is servicing the request. Notice that the connection is load-balanced between the three replica pods.
+
+```
+for i in {1..10}; do \
+curl satir-web-applications.apps.lab.example.com; done
+
+```
+
+
+6.3 Use the curl command to save the hello cookie to the /tmp/cookie_jar file.
+
+```
+curl satir-web-applications.apps.lab.example.com \
+-c /tmp/cookie_jar
+```
+
+6.4 Confirm that the hello cookie exists in the /tmp/cookie_jar file.
+
+```
+ cat /tmp/cookie_jar
+
+```
+
+6.5 The hello cookie provides session stickiness for connections to the satir route. Use the curl command and the hello cookie in the /tmp/cookie_jar file to connect to the satir route again. Confirm that you are connected to the same pod that handled the request in the previous step.
+
+```
+for i in {1..10}; do \
+curl satir-web-applications.apps.lab.example.com -b /tmp/cookie_jar; done
+```
+
+6.6 Use the curl command to connect to the satir route without the hello cookie. Observe that session stickiness occurs only with the cookie.
+
+```
+for i in {1..10}; do \
+curl satir-web-applications.apps.lab.example.com; done
+
+```
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
