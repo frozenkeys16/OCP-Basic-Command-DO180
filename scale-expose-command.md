@@ -564,9 +564,47 @@ Kaya masasabi nating:
 
 ---
 
+**6. Tama ba na "pag na-expose at naging service, ang EndpointSlice ay nakapoint sa Pods"?**
 
+Sagot:
 
+✅ OO.
 
+Ganito ang relationship:
+
+```
+Deployment
+      |
+      v
+Pods
+      |
+      v
+Service
+      |
+      v
+EndpointSlice
+      |
+      v
+Pod IPs
+
+```
+Mas tamang isipin:
+
+```
+
+Service
+   |
+   v
+EndpointSlice
+   |
+   v
+Pods
+
+```
+
+Dahil ginagamit ng Service ang EndpointSlice para malaman kung saan niya ipapadala ang traffic.
+
+---
 
 
 
