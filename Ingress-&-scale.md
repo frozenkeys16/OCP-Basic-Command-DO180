@@ -85,6 +85,189 @@ Pang-loob lang ng cluster.
 Pod A ---> Service ---> Pod B
 ```
 
+---
+
+**Ingress**
+
+Pang-labas.
+
+```
+Internet/User
+      |
+      v
+Ingress
+      |
+      v
+Service
+      |
+      v
+Pod
+
+
+```
+
+---
+
+**4. Sa OpenShift bakit may Route pa?**
+
+Sa screenshot:
+
+```
+oc get routes
+
+```
+
+Makikita:
+
+```
+ingr-sakila.apps.lab.example.com
+
+```
+
+OpenShift may sariling object:
+
+```
+Route
+
+```
+
+Parang mas OpenShift version ng Ingress.
+
+---
+
+Typical OpenShift flow:
+
+```
+
+User Browser
+      |
+      v
+Router
+      |
+      v
+Route / Ingress
+      |
+      v
+Service
+      |
+      v
+Pod
+
+
+```
+
+---
+
+
+5. Ano ang Router?
+
+Sa output:
+
+```
+ADDRESS
+router-default
+
+
+```
+
+Ito yung OpenShift Router.
+
+Madalas HAProxy-based.
+
+Trabaho nito:
+
+```
+
+Tumanggap ng HTTP/HTTPS Traffic
+
+```
+
+at hanapin kung saan ipapadala.
+
+Example:
+
+```
+https://ingr-sakila.apps.lab.example.com
+
+```
+
+Router
+
+```
+Route ba ito?
+Ingress ba ito?
+
+```
+
+Kapag nakita:
+
+```
+sakila-svc
+
+```
+
+doon niya ipapasa.
+
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
