@@ -139,6 +139,90 @@ Kapag gumawa ka ng Ingress, si OpenShift router gagawa rin ng Route internally.
 Ito ang isa sa malaking pagkakaiba ng OpenShift kumpara sa pure Kubernetes.
 
 
+---
+
+
+<h3>4. Test Connectivity</h3>
+
+```
+curl ingr-sakila.apps.lab.example.com
+```
+
+Output
+
+```
+Welcome to Red Hat Training,
+from sakila-app-66947cdd78-x5kpd
+```
+
+**Bakit lumabas yung pod name?**
+
+Para makita mo kung aling pod ang sumagot sa request.
+
+Ito ay pang-test ng:
+
+✅ Ingress
+✅ Service
+✅ Pod
+Lahat gumagana.
+
+---
+
+<h3>5. Scale Deployment</h3>
+Dalawang Replica
+
+```
+oc scale deployment sakila-app --replicas 2
+
+```
+
+Before
+
+```
+sakila-app-xxxxx
+
+```
+
+1 pod lang.
+
+After:
+
+```
+sakila-app-xxxxx
+sakila-app-yyyyy
+
+```
+2 pods na.
+
+---
+
+<h3>Tatlong Replica</h3>
+
+```
+oc scale deployment satir-app --replicas 3
+
+```
+After
+
+```
+satir-app-a
+satir-app-b
+satir-app-c
+
+```
+Tatlong pods na tumatakbo.
+
+---
+
+
+
+
+
+
+
+
+
+
 
 
 
