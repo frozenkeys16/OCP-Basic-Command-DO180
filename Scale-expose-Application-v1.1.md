@@ -503,7 +503,25 @@ Sticky Session sa Route
 ---
 
 
+**Tandaan ang pinakaimportanteng exam/interview question**
 
+Ano ang pagkakaiba ng Route at Ingress?
+
+**Route**
+
+OpenShift specific
+oc expose service
+Mas madaling gamitin
+May built-in OpenShift router
+
+**Ingress**
+
+Standard Kubernetes object
+Portable sa ibang Kubernetes distribution
+Kailangan ng Ingress Controller
+Sa OpenShift, automatic na kino-convert sa Route
+
+Ito ang pinakamadalas na tanong kapag pinag-uusapan ang networking sa OpenShift.
 
 
 
