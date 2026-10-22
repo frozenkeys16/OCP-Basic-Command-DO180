@@ -344,6 +344,63 @@ Para hindi mawala ang user session.
 ---
 
 
+<h3>8. Save Cookie</h3>
+
+```
+curl ingr-sakila.apps.lab.example.com \
+-c /tmp/cookie_jar
+
+```
+
+**Ano ang ginagawa?**
+
+Kumuha ng cookie mula sa server at sine-save.
+
+Example:
+```
+cookie_jar
+
+```
+
+lalagyan ng:
+
+```
+session id
+
+```
+
+---
+
+**9. Reuse Cookie**
+
+```
+curl ingr-sakila.apps.lab.example.com \
+-b /tmp/cookie_jar
+
+```
+
+**Ano ginagawa nito?**
+
+Ipinapadala ulit ang cookie.
+
+Result:
+
+```
+same pod
+same session
+```
+Hindi na ililipat sa ibang pod.
+
+---
+
+
+
+
+
+
+
+
+
 
 
 
