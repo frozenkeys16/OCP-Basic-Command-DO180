@@ -630,6 +630,137 @@ if host = ingr-sakila.apps.lab.example.com
 
 ```
 
+---
+
+**3. Service**
+
+```
+sakila-svc
+
+```
+
+Ito ang Kubernetes/OpenShift Service.
+
+Makikita mo ito sa:
+
+```
+oc get svc
+
+```
+
+Halimbawa:
+
+```
+NAME         TYPE
+sakila-svc   ClusterIP
+
+```
+
+Ang Service ang naglo-load balance papunta sa mga Pod.
+
+```
+Ingress
+   |
+   v
+sakila-svc
+   |
+   +--> Pod1
+   +--> Pod2
+   +--> Pod3
+``
+
+```
+
+---
+
+**4. Port**
+
+```
+8080
+```
+Ito ang port ng Service.
+
+Makikita mo sa:
+
+```
+oc describe svc sakila-svc
+
+```
+Example
+
+```
+Port: 8080/TCP
+TargetPort: 8080
+
+```
+
+Kaya alam ng Ingress kung saan ipapasa ang request.
+
+---
+
+
+**Buong Flow**
+
+Kapag may user:
+
+```
+Browser
+   |
+   v
+http://ingr-sakila.apps.lab.example.com
+   |
+   v
+Ingress
+   |
+   v
+sakila-svc:8080
+   |
+   v
+Pod
+
+
+```
+
+---
+
+**Katumbas nito sa YAML**
+
+Ang command na ito:
+
+```
+oc create ingress ingr-sakila \
+--rule="ingr-sakila.apps.lab.example.com/*=sakila-svc:8080"
+
+```
+
+ay parang gumawa ka ng:
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingr-sakila
+spec:
+  rules:
+  - host: ingr-sakila.apps.lab.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: sakila-svc
+            port:
+              number: 8080
+
+
+```
+
+Mapapansin mo na ang --rule ay shortcut lamang para hindi ka na gumawa ng buong YAML.
+
+---
+
+
 
 
 
