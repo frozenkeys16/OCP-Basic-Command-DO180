@@ -247,8 +247,56 @@ nahahati ang traffic.
 
 ---
 
+<h3>6. Check EndpointSlices</h3>
+
+```
+oc get endpointslices
+
+```
+
+Example:
+
+```
+sakila-svc-dcv28
+
+```
+
+Output:
+
+```
+10.8.0.127
+10.8.0.128
+
+```
+
+**Ano ang EndpointSlice?**
+
+Listahan ito ng mga pod IP na dinadalhan ng service.
+
+Parang:
+
+```
+Service
+ |
+ +--> Pod1
+ |
+ +--> Pod2
+ |
+ +--> Pod3
+
+```
+
+Kapag may bagong replica:
+
+```
+oc scale
+
+```
+
+dadagdag din sa EndpointSlice.
 
 
+----
 
 
 
