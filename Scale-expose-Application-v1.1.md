@@ -298,6 +298,65 @@ dadagdag din sa EndpointSlice.
 
 ----
 
+<h3>7. Enable Sticky Session sa Ingress</h3>
+
+```
+oc annotate ingress ingr-sakila \
+ingress.kubernetes.io/affinity=cookie
+
+```
+
+<h3>Ano ang Sticky Session?</h3>
+
+Normally:
+
+```
+Request1 -> PodA
+Request2 -> PodB
+Request3 -> PodA
+Request4 -> PodB
+
+```
+
+Paiba-iba.
+
+---
+
+
+Kapag sticky:
+
+```
+User A -> PodA
+User A -> PodA
+User A -> PodA
+
+```
+Laging sa parehong pod.
+
+Ginagamit ito sa:
+
+Login session
+Shopping cart
+Banking application
+
+Para hindi mawala ang user session.
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
