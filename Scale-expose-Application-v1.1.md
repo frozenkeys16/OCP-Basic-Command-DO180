@@ -440,8 +440,67 @@ Hangga't valid ang cookie.
 ---
 
 
+<h3>Madaling Tandaan</h3>
+Flow ng Exposure
 
+```
+Deployment
+      |
+      v
+   Service
+      |
+      v
+ Route/Ingress
+      |
+      v
+    User
+```
 
+Commands
+
+```
+oc expose deployment
+
+```
+Create Service
+
+```
+oc expose service
+```
+Create Route
+
+```
+oc create ingress
+```
+
+Create Ingress
+
+```
+oc scale deployment --replicas=N
+
+```
+
+Dagdag bawas Pod
+
+```
+oc get endpointslices
+
+```
+Tingnan kung anong Pods ang nasa likod ng Service
+
+```
+oc annotate ingress ... affinity=cookie
+
+```
+Sticky Session sa Ingress
+
+```
+oc annotate route ... cookie_name=hello
+
+```
+Sticky Session sa Route
+
+---
 
 
 
