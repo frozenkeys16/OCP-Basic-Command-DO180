@@ -524,6 +524,138 @@ Sa OpenShift, automatic na kino-convert sa Route
 Ito ang pinakamadalas na tanong kapag pinag-uusapan ang networking sa OpenShift.
 
 
+---
+
+
+Ang pinakamahalagang maintindihan dito ay ang --rule dahil ito ang nagsasabi sa Ingress kung saan ipapadala ang traffic.
+
+
+Command:
+
+```
+oc create ingress ingr-sakila \
+--rule="ingr-sakila.apps.lab.example.com/*=sakila-svc:8080"
+
+```
+
+Hatiin natin:
+
+```
+ingr-sakila.apps.lab.example.com/*=sakila-svc:8080
+
+```
+
+**Structure**
+
+```
+HOST/PATH=SERVICE:PORT
+
+```
+Sa example:
+
+```
+ingr-sakila.apps.lab.example.com/*=sakila-svc:8080
+│
+├─ Host
+│
+├─ Path
+│
+├─ Service
+│
+└─ Port
+
+
+```
+
+---
+
+**1. Host**
+
+```
+ingr-sakila.apps.lab.example.com
+
+```
+
+Ito ang URL na ita-type ng user sa browser.
+
+Example:
+
+```
+http://ingr-sakila.apps.lab.example.com
+
+```
+
+Kapag may request na dumating sa hostname na ito, saka gagana ang rule.
+
+---
+
+**2. Path**
+
+```
+/*
+
+```
+
+Ibig sabihin:
+
+```
+lahat ng path
+
+```
+Examples:
+
+```
+/
+```
+
+```
+/index.html
+
+```
+```
+/products
+```
+
+```
+/login
+
+```
+lahat ipapadala sa parehong service.
+
+Parang:
+
+```
+if host = ingr-sakila.apps.lab.example.com
+ then send all traffic to sakila-svc
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
