@@ -760,6 +760,68 @@ Mapapansin mo na ang --rule ay shortcut lamang para hindi ka na gumawa ng buong 
 
 ---
 
+**Bakit may --rule?**
+
+Para mabilis makagawa ng Ingress gamit lang ang command line.
+
+Sa halip na:
+
+```
+vi ingress.yaml
+oc apply -f ingress.yaml
+
+```
+
+isang command lang:
+
+```
+oc create ingress ... --rule=...
+
+```
+
+---
+
+**Madaling Tandaan**
+
+Kapag nakita mo ang:
+
+```
+--rule="HOST/PATH=SERVICE:PORT"
+
+```
+basahin mo ito bilang:
+
+"Kapag may pumasok na request sa HOST at PATH na ito, ipadala sa SERVICE na ito gamit ang PORT na ito."
+
+Sa exam o actual work, kadalasan ang tanong ay:
+
+"Saan napupunta ang traffic?"
+
+Sagot:
+
+```
+Host
+  ↓
+Ingress Rule
+  ↓
+Service
+  ↓
+Pod
+
+```
+
+Kaya ang --rule ang nag-uugnay sa URL ng user papunta sa tamang Service/Pod.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
