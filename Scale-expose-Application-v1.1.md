@@ -215,6 +215,47 @@ Tatlong pods na tumatakbo.
 ---
 
 
+<h3>Bakit tayo nag-scale?</h3>
+
+Para sa:
+
+<h3>High Availability</h3>
+
+Kapag namatay ang isang pod:
+
+```
+Pod A = Down
+Pod B = Running
+
+```
+
+Available pa rin application.
+
+---
+
+<h3>Load Balancing</h3>
+
+Kung maraming users:
+
+```
+User1 -> PodA
+User2 -> PodB
+User3 -> PodC
+
+```
+nahahati ang traffic.
+
+---
+
+
+
+
+
+
+
+
+
+
 
 
 
