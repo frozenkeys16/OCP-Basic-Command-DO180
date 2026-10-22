@@ -393,6 +393,51 @@ Hindi na ililipat sa ibang pod.
 
 ---
 
+<h3>10. Sticky Session sa Route</h3>
+
+Para naman sa OpenShift Route:
+
+```
+oc annotate route satir \
+router.openshift.io/cookie_name="hello"
+
+```
+
+Ano ginagawa nito?
+
+Lumilikha ng cookie name:
+
+```
+hello
+
+```
+at ginagamit iyon para sa sticky session.
+
+Diagram:
+
+```
+User
+ |
+ | hello cookie
+ v
+Route
+ |
+ v
+Pod A
+
+```
+
+Lahat ng susunod na request:
+
+```
+Pod A
+Pod A
+Pod A
+
+```
+Hangga't valid ang cookie.
+
+---
 
 
 
