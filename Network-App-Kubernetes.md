@@ -105,6 +105,53 @@ exit
 ```
 ---
 
+4. Create a service for the mysql-app deployment by using the following information:
+
+**Field**    **Value**
+Name         mysql-service
+Port         3306
+Target port  3306
+
+
+4.1 Expose the mysql-app deployment.
+
+```
+[student@workstation ~]$ oc expose deployment mysql-app --name mysql-service \
+--port 3306 --target-port 3306
+
+```
+
+4.2 Verify the service configuration. The endpoint IP address might differ in your output.
+
+```
+[student@workstation ~]$ oc get services
+
+[student@workstation ~]$ oc get endpointslices
+
+```
+
+5. Create a web application deployment named php-app by using the registry.lab.example.com:8443/redhattraining/php-webapp:v1 image.
+
+
+5.1 Create the web application deployment.
+
+```
+[student@workstation ~]$ oc create deployment php-app \
+--image registry.lab.example.com:8443/redhattraining/php-webapp:v1
+
+```
+
+5.2 Verify the deployment status. Verify that the php-app application pod is in the RUNNING state.
+
+```
+[student@workstation ~]$ oc get pods
+
+[student@workstation ~]$ oc status
+
+```
+
+
+
 
 
 
