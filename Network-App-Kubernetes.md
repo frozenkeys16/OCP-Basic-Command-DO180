@@ -150,6 +150,63 @@ Target port  3306
 
 ```
 
+---
+
+6. Create a service for the php-app deployment by using the following information:
+
+**Field**        **Value**
+Name              php-svc
+Port              8080
+Target port       8080
+
+Then, create a route named phpapp to expose the web application to external access.
+
+6.1 Expose the php-app deployment.
+
+```
+[student@workstation ~]$ oc expose deployment php-app --name php-svc \
+--port 8080 --target-port 8080
+
+```
+
+6.2 Verify the service configuration. The endpoint IP address might differ in your output.
+
+```
+**[student@workstation ~]$ oc get services**
+NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+mysql-service   ClusterIP   172.30.146.213   <none>        3306/TCP   7m47s
+php-svc         ClusterIP   172.30.228.80    <none>        8080/TCP   4m34s
+**[student@workstation ~]$ oc get endpointslices**
+NAME                    ADDRESSTYPE   PORTS   ENDPOINTS      AGE
+mysql-service-j9r64     IPv4          3306    10.8.0.132     7m47s
+php-svc-69b57           IPv4          8080    10.8.0.133     12s
+
+```
+
+6.3 Expose the php-svc service.
+
+```
+[student@workstation ~]$ oc expose service/php-svc --name phpapp
+
+```
+
+```
+[student@workstation ~]$ oc get routes
+
+```
+
+---
+
+
+
+
+
+
+
+
+
+
+
 
 
 
