@@ -197,7 +197,11 @@ php-svc-69b57           IPv4          8080    10.8.0.133     12s
 
 ---
 
+7. Test the connectivity between the web application and the MySQL database. In a web browser, go to the phpapp-database-applications.apps.lab.example.com route, and verify that the application retrieves data from the MySQL database.
 
+7.1 Go to the phpapp-database-applications.apps.lab.example.com route in the web browser.
+
+---
 
 
 
