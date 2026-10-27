@@ -116,6 +116,104 @@ claim-name	          dbserver-lvm-pvc
 
 ```
 
+6. Create a service for the dbserver deployment by using the following information:
+
+```
+**Field**         **Value**
+name	              mysql-service
+port	              3306
+target-port	        3306
+
+```
+
+6.1 Expose the dbserver deployment.
+
+```
+[student@workstation ~]$ oc expose deployment dbserver \
+--name mysql-service --port 3306 --target-port 3306
+
+```
+
+6.2 Verify the service and endpoint configuration. The endpoint IP address might differ in your output.
+
+```
+[student@workstation ~]$ oc get services
+NAME           TYPE       CLUSTER-IP     EXTERNAL-IP PORT(S)
+mysql-service  ClusterIP  172.30.240.100 <none>      3306/TCP
+[student@workstation ~]$ oc get endpointslices
+NAME                    ADDRESSTYPE   PORTS   ENDPOINTS      AGE
+mysql-service-j9r64     IPv4          3306    10.8.0.156     19s
+
+```
+
+7. Create a web application deployment named file-sharing by using the registry.lab.example.com:8443/redhattraining/php-webapp-mysql:v1 container image. Scale the deployment to two replicas. Then, expose the deployment by using the following information:
+
+
+```
+
+**Field**	            **Value**
+name	                file-sharing
+port	                8080
+target-port	          8080
+
+```
+
+Create a route named file-sharing to expose the file-sharing web application to external access. Access the file-sharing route in a web browser to test the connection between the web application and the database server.
+
+7.1 Create a web application deployment.
+
+```
+[student@workstation ~]$ oc create deployment file-sharing \
+--image registry.lab.example.com:8443/redhattraining/php-webapp-mysql:v1
+
+```
+
+7.2 Verify the deployment status. Verify that the file-sharing application pod is in the RUNNING state. The pod names might differ on your system.
+
+
+```
+[student@workstation ~]$ oc get pods
+
+```
+
+7.3 Scale the deployment to two replicas.
+
+```
+[student@workstation ~]$ oc scale deployment file-sharing \
+--replicas 2
+
+```
+
+7.4 Verify the replica status and retrieve the pod name. The pod names might differ on your system.
+
+```
+[student@workstation ~]$ oc get pods
+
+```
+
+7.5 Expose the file-sharing deployment.
+
+```
+[student@workstation ~]$ oc expose deployment file-sharing \
+--name file-sharing --port 8080 --target-port 8080
+
+```
+
+7.6 Verify the service configuration. The endpoint IP address might differ in your output.
+
+```
+[student@workstation ~]$ oc get services
+NAME          TYPE       CLUSTER-IP     EXTERNAL-IP  PORT(S)
+file-sharing  ClusterIP  172.30.139.210 <none>       8080/TCP
+mysql-service ClusterIP  172.30.240.100 <none>       3306/TCP
+[student@workstation ~]$ oc get endpointslices
+NAME                    ADDRESSTYPE   PORTS   ENDPOINTS               AGE
+file-sharing-69b57      IPv4          8080    10.8.0.157,10.8.0.158   12s
+mysql-service-j9r64     IPv4          3306    10.8.0.156              5m23s
+
+```
+
+
 
 
 
