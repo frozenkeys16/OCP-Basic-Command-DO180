@@ -324,7 +324,7 @@ pod/file-sharing-65884f75bb-92fxf -- \
 cp /home/database-files/insertdata.sql /home/sharedfiles/
 
 ```
-
+```
 [student@workstation ~]$ oc exec -it \
 pod/file-sharing-65884f75bb-92fxf -- \
 ls /home/sharedfiles/
@@ -340,6 +340,73 @@ ls /home/sharedfiles/
 ```
 
 10. Add the shared-volume PVC to the dbserver deployment. Then, connect to the dbserver deployment pod and verify the content of the /home/sharedfiles/insertdata.sql file.
+
+10.1 Add the shared-volume volume to the dbserver deployment.
+
+```
+[student@workstation ~]$ oc set volume deployment/dbserver \
+--add --name shared-volume \
+--claim-name shared-pvc \
+--mount-path /home/sharedfiles
+
+```
+
+10.2 Verify the deployment status. The pod names might differ on your system. It might take some time for the pods to be ready.
+
+```
+[student@workstation ~]$ oc get pods
+NAME                            READY   STATUS   ...
+dbserver-6676fbf5fc-n9hpk       1/1     Running  ...
+file-sharing-5fdb44cf57-2hhwj   1/1     Running  ...
+file-sharing-5fdb44cf57-z4n7g   1/1     Running  ...
+```
+
+10.3 Verify the content of the /home/sharedfiles/insertdata.sql file by using the dbserver pod.
+
+```
+[student@workstation ~]$ oc exec -it \
+pod/dbserver-6676fbf5fc-n9hpk -- \
+head /home/sharedfiles/insertdata.sql
+
+```
+
+11. Connect to the database server and execute the /home/sharedfiles/insertdata.sql file to add data to the world_x database. You can execute the file by using the following command:
+
+```
+mysql -u$MYSQL_USER -p$MYSQL_PASSWORD world_x < \
+/home/sharedfiles/insertdata.sql
+
+```
+
+Then, confirm connectivity between the web application and the database server by accessing the file-sharing route in a web browser.
+
+11.1 Connect to the dbserver pod.
+
+```
+[student@workstation ~]$ oc rsh dbserver-6676fbf5fc-n9hpk
+
+```
+
+11.2 Connect to the MySQL server and execute the /home/sharedfiles/insertdata.sql file. Then, exit the database server.
+
+```
+sh-4.4$ mysql -u$MYSQL_USER -p$MYSQL_PASSWORD world_x < \
+/home/sharedfiles/insertdata.sql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+sh-4.4$ exit
+exit
+
+```
+
+11.3 Test the connectivity between the web application and the database server. In a web browser, go to http://file-sharing-storage-review.apps.lab.example.com, and verify that the application retrieves data from the world_x database.
+
+---
+
+<img width="1027" height="231" alt="image" src="https://github.com/user-attachments/assets/50bbdc31-94d1-4c48-9de6-38ea90f67ebf" />
+
+---
+
+
 
 
 
