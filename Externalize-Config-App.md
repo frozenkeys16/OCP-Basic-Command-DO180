@@ -161,9 +161,10 @@ Alternatively, you can create the route from the CLI by using the following comm
 
 4.6 Click Create.
 
+---
 
 
-5. Mount the webfiles configuration map as a volume in the webconfig deployment by using the command line.
+**5. Mount the webfiles configuration map as a volume in the webconfig deployment by using the command line.**
 
 5.1 Open a terminal window and log in to the RHOCP cluster as the developer user with developer as the password.
 
@@ -174,3 +175,38 @@ https://api.lab.example.com:6443
 
 ```
 
+5.2 Ensure that you are in the storage-configs project.
+
+```
+[student@workstation ~]$ oc project storage-configs
+
+```
+
+5.3 Mount the webfiles configuration map as a volume.
+
+```
+[student@workstation ~]$ oc set volume deployment/webconfig \
+--add --type configmap --configmap-name webfiles \
+--name webfiles-vol --mount-path /var/www/html/
+
+```
+
+5.4 Verify that the deployment has three available replicas.
+
+```
+[student@workstation ~]$ oc get deployment
+
+```
+
+---
+
+6. Verify that the web application shows the content from the configuration map.
+
+6.1 Switch to the web browser, and go to the web server tab. Click the reload icon in the web browser.
+6.2 Click the Click me link that the web page displays. The web page shows the Red Hat logo.
+
+---
+
+<img width="1075" height="255" alt="image" src="https://github.com/user-attachments/assets/50c726ed-19e8-44ff-9714-dc93c445dba2" />
+
+---
