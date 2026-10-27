@@ -213,6 +213,80 @@ mysql-service-j9r64     IPv4          3306    10.8.0.156              5m23s
 
 ```
 
+7.7 Expose the file-sharing service.
+
+```
+[student@workstation ~]$ oc expose service/file-sharing
+route.route.openshift.io/file-sharing exposed
+[student@workstation ~]$ oc get routes
+NAME         HOST/PORT                                         ...
+file-sharing file-sharing-storage-review.apps.lab.example.com  ...
+
+```
+
+7.8 Test the connectivity between the web application and the database server. In a web browser, go to http://file-sharing-storage-review.apps.lab.example.com, and verify that the Connected successfully message is displayed.
+
+
+---
+
+8. Mount the dbfiles configuration map to the file-sharing deployment as a volume named config-map-pvc. Set the mount path to the /home/database-files directory. Then, verify the content of the insertdata.sql file.
+
+
+8.1 Mount the dbfiles configuration map to the file-sharing deployment.
+
+```
+[student@workstation ~]$ oc set volume deployment/file-sharing \
+--add --name config-map-pvc --type configmap \
+--configmap-name dbfiles \
+--mount-path /home/database-files
+
+```
+
+8.2 Verify the deployment status. It might take some time for the pods to be ready.
+
+```
+[student@workstation ~]$ oc get pods
+NAME                            READY   STATUS   ...
+dbserver-5bc6bd5d7b-7z7lv       1/1     Running  ...
+file-sharing-7f77855b7f-949lg   1/1     Running  ...
+file-sharing-7f77855b7f-9zvwq   1/1     Running  ...
+
+```
+
+8.3 Verify the content of the /home/database-files/insertdata.sql file by using one of the file-sharing pods.
+
+```
+[student@workstation ~]$ oc exec -it \
+pod/file-sharing-7f77855b7f-949lg -- \
+head /home/database-files/insertdata.sql
+-- MySQL dump 10.13  Distrib 8.0.19, for osx10.14 (x86_64)
+--
+-- Host: 127.0.0.1    Database: world_x
+-- ------------------------------------------------------
+-- Server version 8.0.19-debug
+...output omitted...
+
+```
+
+9. Add a shared volume to the file-sharing deployment. Use the following information to create the volume:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
