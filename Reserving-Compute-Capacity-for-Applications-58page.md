@@ -83,6 +83,59 @@ spec:
 
 ```
 
+2.3 Scale the deployment to have 10 replicas.
+
+```
+[student@workstation reliability-requests]$ oc scale deploy/long-load \
+--replicas 10
+
+```
+
+2.4 Verify that the cluster cannot schedule all pods on the single node. The cluster cannot schedule pods with the Pending status.
+
+```
+[student@workstation reliability-requests]$ oc get pods
+NAME                         READY   STATUS    RESTARTS   AGE
+...output omitted...
+long-load-86bb4b79f8-44zwd   0/1     Pending   0          58s
+
+```
+
+2.5 Retrieve the cluster event log to confirm that insufficient memory is the cause of the failed scheduling.
+
+```
+[student@workstation reliability-requests]$ oc get events \
+--field-selector reason="FailedScheduling"
+
+```
+
+Alternatively, view the events for a pending pod to see the reason. In the following command, replace the pod name with one of the pending pods in your classroom.
+
+
+```
+[student@workstation reliability-requests]$ oc describe \
+pod/long-load-86bb4b79f8-44zwd
+
+```
+
+2.6 Verify that the node's requested memory usage is high.
+
+```
+[student@workstation reliability-requests]$ oc describe node master01
+...output omitted...
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests          Limits
+  --------           --------          ------
+  cpu                2858m (51%)       10m (0%)
+  memory             14249Mi (95%)     0 (0%)
+
+
+```
+
+---
+
+
 
 
 
