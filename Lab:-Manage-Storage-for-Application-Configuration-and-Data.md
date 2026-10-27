@@ -270,6 +270,93 @@ head /home/database-files/insertdata.sql
 
 9. Add a shared volume to the file-sharing deployment. Use the following information to create the volume:
 
+```
+
+**Field**	                                  **Value**
+name	                                      shared-volume
+type	                                      persistentVolumeClaim
+claim-mode	                                rwm
+claim-size	                                1Gi
+mount-path	                                /home/sharedfiles
+claim-class	                                nfs-storage
+claim-name	                                shared-pvc
+
+```
+
+Next, connect to one of the file-sharing deployment pods, and use the cp command to copy the /home/database-files/insertdata.sql file to the /home/sharedfiles directory. Then, remove the config-map-pvc volume from the file-sharing deployment.
+
+9.1 Add the shared-volume volume to the file-sharing deployment.
+
+```
+[student@workstation ~]$ oc set volume deployment/file-sharing \
+--add --name shared-volume --type persistentVolumeClaim \
+--claim-mode rwm --claim-size 1Gi \
+--mount-path /home/sharedfiles --claim-class nfs-storage \
+--claim-name shared-pvc
+
+```
+9.2 Verify the deployment status. Your pod names might differ on your system. It might take some time for the pods to be ready.
+
+
+```
+[student@workstation ~]$ oc get pods
+NAME                            READY   STATUS  ...
+dbserver-5bc6bd5d7b-7z7lv       1/1     Running ...
+file-sharing-65884f75bb-92fxf   1/1     Running ...
+file-sharing-65884f75bb-gsghk   1/1     Running ...
+
+```
+
+9.3 Verify the volume status.
+
+```
+[student@workstation ~]$ oc get pvc
+NAME              STATUS  VOLUME           CAPACITY  ACCESS MODES  ...
+dbserver-lvm-pvc  Bound   pvc-2cb8...5025  1Gi       RWO           ...
+shared-pvc        Bound   pvc-cf2d...de48  1Gi       RWX           ...
+
+```
+9.4 Copy the /home/database-files/insertdata.sql file to the /home/sharedfiles path inside of the file-sharing-65884f75bb-92fxf pod.
+
+```
+[student@workstation ~]$ oc exec -it \
+pod/file-sharing-65884f75bb-92fxf -- \
+cp /home/database-files/insertdata.sql /home/sharedfiles/
+
+```
+
+[student@workstation ~]$ oc exec -it \
+pod/file-sharing-65884f75bb-92fxf -- \
+ls /home/sharedfiles/
+
+```
+
+9.5 Remove the config-map-pvc volume from the file-sharing deployment.
+
+```
+[student@workstation ~]$ oc set volume deployment/file-sharing \
+--remove --name=config-map-pvc
+
+```
+
+10. Add the shared-volume PVC to the dbserver deployment. Then, connect to the dbserver deployment pod and verify the content of the /home/sharedfiles/insertdata.sql file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
