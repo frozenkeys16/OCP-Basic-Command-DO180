@@ -191,6 +191,151 @@ deployment.apps "db-pod" deleted from storage-classes namespace
 
 ```
 
+6.3 Delete the db-pod-pvc PVC.
+
+```
+[student@workstation ~]$ oc delete pvc db-pod-pvc
+
+```
+
+7. Create a PVC for an application that requires a shared storage volume from the nfs-storage storage class.
+
+7.1 Create a nfs-pvc.yaml file with the following content:
+
+```
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: nfs-storage
+
+```
+
+For convenience, the ~/DO180/solutions/storage-classes/nfs-pvc.yaml file contains the YAML manifest for the PVC.
+
+
+7.2 Create the PVC by using the oc create -f command and the YAML manifest file.
+
+```
+[student@workstation ~]$ oc create -f nfs-pvc.yaml
+
+```
+7.3 Use the oc describe pvc command to view the details of the PVC resource.
+
+```
+[student@workstation ~]$ oc describe pvc nfs-pvc
+Name:          nfs-pvc
+Namespace:     storage-classes
+StorageClass:  nfs-storage
+Status:        Bound 1
+Volume:        pvc-9f462124-d96e-43e5-96a7-f96dd9375579 2
+Labels:        <none>
+Annotations:   pv.kubernetes.io/bind-completed: yes
+               pv.kubernetes.io/bound-by-controller: yes
+               volume.beta.kubernetes.io/storage-provisioner: k8s-sigs.io/nfs-subdir-external-provisioner
+               volume.kubernetes.io/storage-provisioner: k8s-sigs.io/nfs-subdir-external-provisioner
+Finalizers:    [kubernetes.io/pvc-protection]
+Capacity:      1Gi
+Access Modes:  RWO
+VolumeMode:    Filesystem
+Used By:       <none> 3
+
+```
+
+The Status: Bound value and the Volume attribute assignment confirm that the volume binding mode of the storage class is set to Immediate.
+
+The Used By: <none> attribute shows that no pod is using the PVC.
+
+8. Use the registry.lab.example.com:8443/ubi9/httpd-24:1-321 container image to create a web application deployment named web-pod.
+
+8.1 Create the web-pod deployment.
+
+```
+[student@workstation ~]$ oc create deployment web-pod \
+--port 8080 \
+--image registry.lab.example.com:8443/ubi9/httpd-24:1-321
+
+```
+
+8.2 Create a service for the web-pod application.
+
+```
+[student@workstation ~]$ oc expose deployment web-pod
+
+```
+
+8.3 Expose the service to create a route for the wep-pod application. Specify web-pod.apps.lab.example.com as the hostname.
+
+```
+[student@workstation ~]$ oc expose svc web-pod \
+--hostname web-pod.apps.lab.example.com
+
+```
+
+8.4 View the route that is assigned to the web-pod application.
+
+```
+[student@workstation ~]$ oc get routes
+
+```
+8.5 Use the curl command to view the index page of the web-pod application.
+
+```
+[student@workstation ~]$ curl -s \
+http://web-pod.apps.lab.example.com/ | head
+
+```
+
+9. Add the nfs-pvc PVC to the web-pod deployment.
+
+9.1 Use the oc set volume command to add the PVC to the deployment. Specify the volume name as nfs-volume, and set the mount path to the /var/www/html directory.
+
+```
+[student@workstation ~]$ oc set volumes deployment/web-pod \
+--add --name nfs-volume \
+--claim-name nfs-pvc \
+--mount-path /var/www/html
+
+```
+
+The volume mount-path is set to the /var/www/html directory. The server uses this path to serve HTML content.
+
+
+
+10. Use the registry.lab.example.com:8443/redhattraining/do180-roster container image to create a custom web application deployment named app-pod.
+
+10.1 Create the app-pod deployment and specify port 9090 as the target port.
+
+```
+[student@workstation ~]$ oc create deployment app-pod \
+--port 9090 --image \
+registry.lab.example.com:8443/redhattraining/do180-roster
+
+```
+
+10.2 Create a service for the app-pod application.
+
+```
+[student@workstation ~]$ oc expose deployment app-pod
+
+```
+
+10.3 Expose the service to create a route for the app-pod application. Use app-pod.apps.lab.example.com for the hostname.
+
+```
+[student@workstation ~]$ oc expose svc app-pod \
+--hostname app-pod.apps.lab.example.com
+
+```
+---
+
 
 
 
