@@ -286,6 +286,97 @@ data-dbserver-1       Bound   ...  1Gi         RWO          ...
 
 ```
 
+7.2 Verify that the dbserver-0 pod mounts the data-dbserver-0 PVC.
+
+```
+[student@workstation ~]$ oc get pod dbserver-0 -o json | \
+jq .spec.volumes[0].persistentVolumeClaim.claimName
+
+```
+
+7.3 Verify that the dbserver-1 pod mounts the data-dbserver-1 PVC.
+
+```
+[student@workstation ~]$ oc get pod dbserver-1 -o json | \
+jq .spec.volumes[0].persistentVolumeClaim.claimName
+
+```
+
+7.4 Create a table named items within the sakila database in the dbserver-0 pod by running the following command. You can safely ignore the warning message about using a password on the CLI.
+
+```
+[student@workstation ~]$ oc exec -it pod/dbserver-0 -- /bin/bash -c \
+"mysql -uredhat -predhat123 sakila -e 'create table items (count INT);'"
+
+```
+
+7.5 Create a table named inventory within the sakila database in the dbserver-1 pod by running the following command. You can safely ignore the warning message about using a password on the CLI.
+
+
+```
+
+[student@workstation ~]$ oc exec -it pod/dbserver-1 -- /bin/bash -c \
+"mysql -uredhat -predhat123 sakila -e 'create table inventory (count INT);'"
+
+```
+8. No data replication is configured at the application level for the dbserver stateful set. Verify that each database pod contains unique data.
+
+8.1 Confirm that the dbserver-0 pod has a database named sakila with one table named items.
+
+```
+[student@workstation ~]$ oc exec -it pod/dbserver-0 -- /bin/bash -c \
+"mysql -uredhat -predhat123 sakila -e 'show tables;'"
+mysql: [Warning] Using a password on the command line interface can be insecure.
++------------------+
+| Tables_in_sakila |
++------------------+
+| items            |
+
+```
+
+8.2 Confirm that the dbserver-1 pod has a database named sakila with one table named inventory.
+
+```
+[student@workstation ~]$ oc exec -it pod/dbserver-1 -- /bin/bash -c \
+"mysql -uredhat -predhat123 sakila -e 'show tables;'"
+mysql: [Warning] Using a password on the command line interface can be insecure.
++------------------+
+| Tables_in_sakila |
++------------------+
+| inventory        |
++------------------+
+
+```
+
+9. Delete a pod in the dbserver stateful set. A new stateful set pod is created with the same ordinal index, and the pod mounts its corresponding PVC. The data remains in the PVC and it is accessible from the pod.
+
+9.1 Delete the dbserver-0 pod in the dbserver stateful set.
+
+```
+[student@workstation ~]$ oc delete pod dbserver-0
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
