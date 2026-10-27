@@ -77,6 +77,109 @@ Target                            port	3306
 
 **Table 5.7. Add PVC Storage Fields**
 
+```
+**Field name**                     	**Value**
+PersistentVolumeClaim name	        db-pod-pvc
+Access mode	                        Single user (RWO)
+Size                              	1 GiB
+Volume mode	                        Filesystem
+Mount path	                        /var/lib/mysql
+```
+
+----
+
+
+4.5 Click Save.
+
+4.6 On the Deployment details page, scroll to the Volumes section, and click the db-pod-pvc link to view the PVC details.
+
+---
+
+<img width="1097" height="385" alt="image" src="https://github.com/user-attachments/assets/2a4a8728-571b-4d1c-8f62-37778f2f96d8" />
+
+---
+
+4.7 To retrieve the name of the PV that is associated with the PVC, go to the YAML tab. The name of the PV is available in the .spec.volumeName field. The name starts with pvc- even though the resource is a PV.
+
+
+---
+
+<img width="1116" height="597" alt="image" src="https://github.com/user-attachments/assets/46320fb2-6eab-47b8-9fe5-3b24fec8a4a3" />
+
+
+---
+
+The name of the PV is different on your system.
+
+
+**5. Verify that configuring storage changes the deployment resource.**
+
+5.1 Go to Workloads → Deployments, click the db-pod deployment name, and go to the YAML tab.
+5.2 Verify that configuring storage for the deployment adds the volumes and volumeMounts fields.
+
+
+```
+
+kind: Deployment
+apiVersion: apps/v1
+...output omitted...
+      volumes:
+        - name: db-pod-pvc
+          persistentVolumeClaim:
+            claimName: db-pod-pvc
+...output omitted...
+        volumeMounts:
+          - name: db-pod-pvc
+            mountPath: /var/lib/mysql
+...output omitted...
+
+```
+
+
+6. Use a configuration map resource to add initialization data to the database.
+
+6.1 Review the ~/DO180/labs/storage-volumes/configmap/init-db.sql script that initializes the database. You do not have to change its contents.
+
+```
+DROP TABLE IF EXISTS `Item`;
+CREATE TABLE `Item` (`id` BIGINT not null auto_increment primary key, `description` VARCHAR(100), `done` BOOLEAN);
+INSERT INTO `Item` (`id`,`description`,`done`) VALUES (1,'Pick up newspaper', 0);
+INSERT INTO `Item` (`id`,`description`,`done`) VALUES (2,'Buy groceries', 1);
+
+
+```
+
+6.2 Log in to the RHOCP cluster as the developer user with developer as the password.
+
+```
+[student@workstation ~]$ oc login -u developer -p developer \
+https://api.lab.example.com:6443
+
+
+```
+
+6.3 Set the storage-volumes project as the active project.
+
+```
+[student@workstation ~]$ oc project storage-volumes
+
+```
+
+6.4 Use the contents of the init-db.sql file to create a configuration map named init-db-cm.
+
+```
+[student@workstation ~]$ oc create configmap init-db-cm \
+--from-file ~/DO180/labs/storage-volumes/configmap/init-db.sql
+
+```
+
+
+
+
+
+
+
+
 
 
 
