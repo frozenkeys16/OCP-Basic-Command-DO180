@@ -57,6 +57,195 @@ curl -s localhost:3000/health
 
 ---
 
+2. Trigger the pod to crash, and observe that the restartPolicy instructs the cluster to re-create the pod.
+
+2.1 Observe that the pod is running and did not restart.
+
+```
+[student@workstation reliability-ha]$ oc get pods
+NAME        READY   STATUS    RESTARTS   AGE
+long-load   1/1     Running   0          1m
+
+```
+
+2.2 Send a request to the /destruct endpoint in the application. This request triggers the process to crash.
+
+```
+[student@workstation reliability-ha]$ oc exec long-load -- \
+curl -s localhost:3000/destruct
+command terminated with exit code 52
+
+```
+
+2.3 Observe that the pod is running and restarted one time.
+
+```
+[student@workstation reliability-ha]$ oc get pods
+NAME        READY   STATUS    RESTARTS      AGE
+long-load   1/1     Running   1 (34s ago)   4m16s
+
+```
+
+2.4 Delete the long-load pod.
+
+```
+[student@workstation reliability-ha]$ oc delete pod long-load
+
+```
+
+The cluster does not re-create the pod, because you manually created the pod outside a workload resource, such as a deployment.
+
+
+
+3. Use a restart policy of Never to create the pod, and observe that the cluster does not re-create the pod on crashing.
+
+3.1 Modify the long-load.yaml file so that the restartPolicy is set to Never.
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: long-load
+spec:
+...output omitted...
+  restartPolicy: Never
+
+```
+
+3.2 Create the pod with the updated YAML file.
+
+```
+[student@workstation reliability-ha]$ oc apply -f long-load.yaml
+
+```
+
+3.3 Send a request to the pod to confirm that the pod is running and that the application is responding.
+
+```
+[student@workstation reliability-ha]$ oc exec long-load -- \
+curl -s localhost:3000/health
+
+```
+
+3.4 Send a request to the /destruct endpoint in the application to crash it.
+
+```
+[student@workstation reliability-ha]$ oc exec long-load -- \
+curl -s localhost:3000/destruct
+
+```
+
+3.5 Observe that the cluster does not restart the pod, and that the pod is in an error state.
+
+```
+[student@workstation reliability-ha]$ oc get pods
+NAME        READY   STATUS   RESTARTS   AGE
+long-load   0/1     Error    0          2m36s
+
+```
+
+3.6 Delete the long-load pod.
+
+```
+[student@workstation reliability-ha]$ oc delete pod long-load
+```
+
+4. Because the cluster does not know when the application is ready to receive requests, you must add a startup delay. A later exercise covers adding this capability by using probes.
+
+4.1 Update the long-load.yaml file by adding a startup delay and by setting the restart policy to Always. Set the START_DELAY variable to 60,000 milliseconds (one minute) so that the file exactly matches the following excerpt:
+
+```
+...output omitted...
+spec:
+  containers:
+  - image: registry.lab.example.com:8443/redhattraining/long-load:v1
+    imagePullPolicy: Always
+    securityContext:
+      allowPrivilegeEscalation: false
+    name: long-load
+    env:
+      - name: START_DELAY
+        value: "60000"
+  restartPolicy: Always
+```
+---
+
+```
+**Note**
+Although numbers are a valid YAML type, you must pass environment variables as strings. YAML syntax is also indentation-sensitive.
+
+For these reasons, ensure that your file appears exactly as in the preceding example.
+
+```
+
+4.2 Apply the YAML file to create the pod and proceed within one minute to the next step.
+
+```
+[student@workstation reliability-ha]$ oc apply -f long-load.yaml
+
+```
+
+4.3 Within one minute of pod creation, verify the status of the pod. The status shows as Running even though the application is not yet ready. Try to send a request to the application, and observe that it fails.
+
+```
+[student@workstation reliability-ha]$ oc get pods
+NAME        READY   STATUS    RESTARTS   AGE
+long-load   1/1     Running   0          16s
+```
+
+```
+[student@workstation reliability-ha]$ oc get pods
+NAME        READY   STATUS    RESTARTS   AGE
+long-load   1/1     Running   0          16s
+
+```
+
+4.4 After waiting one minute for the application to start, send another request to the pod to confirm that it is running and responding.
+
+```
+[student@workstation reliability-ha]$ oc exec long-load -- \
+curl -s localhost:3000/health
+
+```
+
+---
+
+5. Use a deployment to scale up the number of deployed pods. Observe that OpenShift dispatches the client requests between the replicated pods, even if the application in one of the pods returns errors.
+
+5.1 Review the long-load-deploy.yaml file, which defines a deployment, service, and route. The deployment creates three replicas of the application pod.
+
+The deployment file sets a START_DELAY environment variable to 15,000 milliseconds (15 seconds) in each pod. The application responds that it is not ready until after the delay.
+
+
+```
+student@workstation reliability-ha]$ cat long-load-deploy.yaml
+...output omitted...
+    spec:
+      containers:
+      - image: registry.lab.example.com:8443/redhattraining/long-load:v1
+        imagePullPolicy: Always
+        name: long-load
+        env:
+        - name: START_DELAY
+          value: "15000"
+...output omitted...
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
