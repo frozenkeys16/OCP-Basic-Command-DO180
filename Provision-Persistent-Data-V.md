@@ -25,11 +25,21 @@
 ---
 
 
+3.2 Click Create Deployment.
+3.3 Use db-pod for the deployment name and change the image name to registry.lab.example.com:8443/rhel10/mariadb-118.
+3.4 Add the required environment variables for the database.
 
+**Table 5.5. MariaDB Environment Variables**
 
+```
+**Name**                 **Value**
+MYSQL_USER	               user1
+MYSQL_PASSWORD	           redhat123
+MYSQL_DATABASE	           items
 
+```
 
-
+---
 
 
 
