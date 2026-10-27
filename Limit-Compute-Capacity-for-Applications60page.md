@@ -65,6 +65,79 @@ leakapp-99bb64c8d-hk26k   1/1     Running   0          12s
 
 ---
 
+3. Observe the status of the leakapp pod until the OOMKilled status is displayed.
+
+3.1 Use the watch oc get pods command to observe the status of the leakapp pod.
+
+```
+[student@workstation ~]$ watch oc get pods
+
+```
+
+OpenShift restarts the pod several times because of the memory leak. Between each restart, OpenShift sets the pod status to OOMKilled and then CrashLoopBackOff, waits an increasing amount of time between retries, and restarts the pod. During this wait time, the application is not available to your customers.
+
+Press Ctrl+C to quit the watch command.
+
+4. Update the leakapp deployment to set the memory limit to 600 MiB.
+
+4.1 Use the oc set resources command to set the new limit.
+
+```
+[student@workstation ~]$ oc set resources deployment/leakapp \
+--limits memory=600Mi
+
+```
+
+4.2 Use the watch oc get pods command to verify the status of the leakapp pod. The pod no longer restarts every 30 seconds.
+
+```
+[student@workstation ~]$ watch oc get pods
+
+```
+Press Ctrl+C to quit the watch command.
+
+---
+
+5. Optional. Wait about 10 minutes from the creation time until the application reaches the out of memory error. After this period, OpenShift restarts the pod, because it reached the 600 MiB memory limit.
+
+5.1 Run the watch command to monitor the oc adm top pods command.
+
+```
+[student@workstation ~]$ watch oc adm top pods
+
+```
+Leave the command running and do not interrupt it.
+
+---
+
+**Note**
+You might see a message that metrics are not yet available. If so, wait some time and try again.
+
+5.2 Open a second terminal window and use the watch command to monitor the oc get pods command.
+
+```
+[student@workstation ~]$ watch oc get pods
+
+```
+Watch the output of the oc adm top pods command in the second terminal. When the memory usage reaches 600 MiB, the OOM subsystem kills the process inside the container, and OpenShift restarts the pod.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
