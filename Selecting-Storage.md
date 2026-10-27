@@ -336,6 +336,38 @@ registry.lab.example.com:8443/redhattraining/do180-roster
 ```
 ---
 
+11. Add the nfs-pvc PVC to the app-pod application deployment.
+
+11.1 Use the oc set volume command to add the PVC to the deployment. Set the volume name to nfs-volume and set the mount path to the /var/tmp directory.
+
+```
+[student@workstation ~]$ oc set volumes deployment/app-pod \
+--add --name nfs-volume \
+--claim-name nfs-pvc \
+--mount-path /var/tmp
+
+```
+
+At this point, the web-pod and the app-pod applications are sharing a PVC. Kubernetes cannot prevent data conflicts between the two applications. In this case, the app-pod application is a writer and the web-pod application is a reader, and thus they do not conflict. The application implementation, not Kubernetes, prevents data corruption from the two applications that use the same PVC. The RWO access mode does not protect data integrity; a single node can mount the volume as read/write, and pods that share the volume must exist on the same node.
+
+
+
+12. Use the app-pod application to add content to the shared volume.
+12. 1 Open a web browser and go to http://app-pod.apps.lab.example.com
+
+---
+
+
+<img width="1158" height="469" alt="image" src="https://github.com/user-attachments/assets/be9cf3cf-d1b2-415c-8a4a-16b183646c45" />
+
+---
+
+12.2 In the form, enter your information and click save. The application adds your information to the list after the form.
+
+12.3 Click push to create the /var/tmp/People.html file on the shared volume.
+
+
+13. Verify that the web-pod application displays the People.html file from the shared PVC. Open a browser tab and go to http://web-pod.apps.lab.example.com/People.html
 
 
 
