@@ -132,8 +132,95 @@ Allocated resources:
 
 
 ```
+The command output shows that the pods from the long-load deployment requested most of the remaining memory from the node. However, not enough memory is available to accommodate the 10 replicas.
+
 
 ---
+
+
+3. Reduce the requested memory per pod so that the replicas can run on the node.
+
+3.1 Scale the deployment to zero replicas. Scaling down first prevents a stalled rolling update, because the existing pods that request 1Gi of memory cannot be replaced when the node has insufficient memory.
+
+```
+[student@workstation reliability-requests]$ oc scale deploy/long-load \
+--replicas 0
+
+```
+
+3.2 Set the resource request to 150Mi.
+
+```
+[student@workstation reliability-requests]$ oc set resources deploy/long-load \
+--requests memory=150Mi
+
+```
+
+3.3 Scale back the deployment to 10 replicas.
+
+```
+[student@workstation reliability-requests]$ oc scale deploy/long-load \
+--replicas 10
+
+```
+
+3.4 Verify that all pods can start with the lowered memory request. Within one minute, the cluster marks the pods as Ready and places them in the Running state, with no pods in the Pending status.
+
+```
+[student@workstation reliability-requests]$ oc get pods
+NAME                         READY   STATUS    RESTARTS   AGE
+long-load-557b4d94f5-68hbb   1/1     Running   0          3m14s
+long-load-557b4d94f5-bfk7c   1/1     Running   0          3m21s
+long-load-557b4d94f5-bnpzh   1/1     Running   0          3m21s
+long-load-557b4d94f5-chtv9   1/1     Running   0          3m21s
+long-load-557b4d94f5-drg2p   1/1     Running   0          3m14s
+long-load-557b4d94f5-hwsz6   1/1     Running   0          3m12s
+long-load-557b4d94f5-k5vqj   1/1     Running   0          3m21s
+long-load-557b4d94f5-lgstq   1/1     Running   0          3m21s
+long-load-557b4d94f5-r8hq4   1/1     Running   0          3m21s
+long-load-557b4d94f5-xrg7c   1/1     Running   0          3m21s
+
+```
+
+Observe that the memory usage of the node is lower.
+
+```
+[student@workstation reliability-requests]$ oc describe node master01
+...output omitted...
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests           Limits
+  --------           --------           ------
+  cpu                2858m (51%)        10m (0%)
+  memory             13701Mi (92%)      0 (0%)
+
+```
+
+3.5 Return to the /home/student/ directory.
+
+```
+[student@workstation reliability-requests]$ cd /home/student/
+
+```
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
