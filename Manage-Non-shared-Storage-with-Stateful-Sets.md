@@ -357,7 +357,39 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 
 ```
 
+9.2 Verify that a new dbserver-0 pod is created.
 
+```
+[student@workstation ~]$ oc get pods -l app=database
+NAME         READY   STATUS    RESTARTS   AGE
+dbserver-0   1/1     Running   0          4s
+dbserver-1   1/1     Running   0          15m
+
+```
+
+9.3 Verify that the dbserver-0 pod mounts the data-dbserver-0 PVC.
+
+```
+[student@workstation ~]$ oc get pod dbserver-0 -o json | \
+jq .spec.volumes[0].persistentVolumeClaim.claimName
+
+```
+9.4 Verify that the new dbserver-0 pod has the items table within the sakila database.
+
+```
+[student@workstation ~]$ oc exec -it pod/dbserver-0 -- /bin/bash -c \
+"mysql -uredhat -predhat123 sakila -e 'show tables;'"
+mysql: [Warning] Using a password on the command line interface can be insecure.
++------------------+
+| Tables_in_sakila |
++------------------+
+| items            |
++------------------+
+
+
+```
+
+---
 
 
 
