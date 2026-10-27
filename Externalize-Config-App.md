@@ -96,6 +96,81 @@ Alternatively, you can create the service from the CLI by using the following co
 
 3.7 Click Create.
 
+---
+
+**Note**
+Alternatively, you can create the route from the CLI by using the following command:
+
+```
+[student@workstation ~]$ oc expose svc/webconfig-svc \
+--namespace storage-configs --name webconfig-rt
+
+```
+
+3.8 On the Details page of the route, click the Location link.
 
 
+---
+
+<img width="937" height="622" alt="image" src="https://github.com/user-attachments/assets/a39926e9-1652-45db-97d4-ca4c4fec8949" />
+
+
+---
+
+3.9  The route link opens a browser tab that displays the default test page of the web server. Do not close the browser tab, because you use it in another step.
+
+
+
+---
+
+<img width="1090" height="679" alt="image" src="https://github.com/user-attachments/assets/27314332-4d9d-4bbb-9b2f-4cb5911173ed" />
+
+
+---
+
+4. Create a configuration map that contains the files for the web application.
+
+
+4.1 Change to the web console browser tab. Go to Workloads → ConfigMaps and click Create ConfigMap.
+4.2 Set the name of the configuration map to webfiles.
+4.3 In the Data section, define the index.html name as the Key value, and click Browse in the Value field to select the /home/student/DO180/labs/storage-configs/index.html file.
+
+---
+
+<img width="961" height="628" alt="image" src="https://github.com/user-attachments/assets/4a65e1ce-f17b-4b11-8713-c24b2b81e51f" />
+
+---
+
+4.4 Add a binary data key. In the Binary Data section, click Add key/value.
+
+---
+
+<img width="968" height="625" alt="image" src="https://github.com/user-attachments/assets/dcb94270-3a23-4ab5-9ead-63b79e2b9f4e" />
+
+---
+
+4.5 Define the redhatlogo.png name as the Key value, and click Browse in the Value field to select the /home/student/DO180/labs/storage-configs/redhatlogo.png file.
+
+
+---
+
+<img width="937" height="625" alt="image" src="https://github.com/user-attachments/assets/a36391f2-bb83-457a-a71c-048b0f440c6f" />
+
+
+---
+
+4.6 Click Create.
+
+
+
+5. Mount the webfiles configuration map as a volume in the webconfig deployment by using the command line.
+
+5.1 Open a terminal window and log in to the RHOCP cluster as the developer user with developer as the password.
+
+```
+[student@workstation ~]$ oc login -u developer -p developer \
+https://api.lab.example.com:6443
+
+
+```
 
