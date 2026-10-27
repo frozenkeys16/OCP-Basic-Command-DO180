@@ -231,6 +231,67 @@ student@workstation reliability-ha]$ cat long-load-deploy.yaml
 ...output omitted...
 ```
 
+5.2 Start the load test script, which sends a request to the /health API endpoint of the application every two seconds. Leave the script running in a visible terminal window.
+
+```
+[student@workstation reliability-ha]$ ./load-test.sh
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+```
+
+5.3 In a new terminal window, apply the ~/DO180/labs/reliability-ha/long-load-deploy.yaml file.
+
+```
+[student@workstation ~]$ oc apply -f \
+~/DO180/labs/reliability-ha/long-load-deploy.yaml
+
+```
+5.4 Watch the output of the load test script in the other terminal window as the pods and the application instances start. After a delay, the requests succeed.
+
+```
+app is still starting
+...output omitted...
+Ok
+Ok
+Ok
+
+```
+
+5.5 Go to the second terminal window and send a request to the /togglesick API endpoint to put one of the three pods into a broken state.
+
+```
+[student@workstation ~]$ curl \
+long-load-reliability-ha.apps.lab.example.com/togglesick
+
+```
+
+5.6 Go to the first terminal window and notice the output of the load test script during the failure of some requests. Because the load balancer distributes requests across pods, the order of the output varies.
+
+```
+
+...output omitted...
+Ok
+app is unhealthy
+app is unhealthy
+Ok
+Ok
+
+```
+
+Press Ctrl+C to end the load test script, and close the second terminal window.
+
+
+
+5.7 Return to the /home/student/ directory.
+
+```
+[student@workstation reliability-ha]$ cd /home/student/
+
+```
+
+---
 
 
 
