@@ -54,7 +54,67 @@ world-cred   Opaque   3      2m34s
 
 3. Create a configuration map named dbfiles by using the ~/DO180/labs/storage-review/insertdata.sql file.
 
+3.1 Create a configuration map named dbfiles by using the insertdata.sql file in the ~/DO180/labs/storage-review directory.
 
+```
+[student@workstation ~]$ oc create configmap dbfiles \
+--from-file ~/DO180/labs/storage-review/insertdata.sql
+
+```
+
+3.2 Verify the creation of the configuration map.
+
+```
+[student@workstation ~]$ oc get configmaps
+NAME     DATA  AGE
+dbfiles  1     11s
+
+```
+
+4. Create a database server deployment named dbserver by using the registry.lab.example.com:8443/redhattraining/mysql-app:v1 container image. Then, set the missing environment variables by using the world-cred secret. Use the MYSQL_ prefix for the variables.
+
+4.1 Create the database server deployment.
+
+```
+[student@workstation ~]$ oc create deployment dbserver \
+--image \
+registry.lab.example.com:8443/redhattraining/mysql-app:v1
+
+```
+
+4.2 Set the missing environment variables.
+
+```
+[student@workstation ~]$ oc set env deployment/dbserver \
+--from secret/world-cred --prefix MYSQL_
+
+```
+
+4.3 Verify that the dbserver pod is in the RUNNING state. The pod name might differ in your output.
+
+```
+[student@workstation ~]$ oc get pods
+
+```
+
+
+---
+
+5. Add a volume to the dbserver deployment by using the following information:
+
+```
+
+Field	                Value
+name	                dbserver-lvm
+type	                persistentVolumeClaim
+claim-mode	          rwo
+claim-size	          1Gi
+mount-path	          /var/lib/mysql
+claim-class	          lvms-vg1
+claim-name	          dbserver-lvm-pvc
+
+
+```
 
 
 
