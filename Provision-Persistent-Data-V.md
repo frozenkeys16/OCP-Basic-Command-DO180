@@ -213,6 +213,103 @@ sh-5.2$
 
 ```
 
+6.9 Exit the shell session.
+
+```
+sh-5.2$ exit
+
+```
+
+7. Delete and then re-create the db-pod deployment to verify that the database data persists.
+
+7.1 Delete the db-pod deployment.
+
+```
+[student@workstation ~]$ oc delete deployment/db-pod
+
+```
+
+
+7.2 Verify that the PVC still exists without the deployment.
+
+```
+[student@workstation ~]$ oc get pvc
+
+
+```
+
+7.3 Re-create the db-pod deployment.
+
+```
+[student@workstation ~]$ oc create deployment db-pod --port 3306 \
+--image registry.lab.example.com:8443/rhel10/mariadb-118
+
+```
+
+
+7.4 Add the environment variables.
+
+```
+[student@workstation ~]$ oc set env deployment/db-pod \
+MYSQL_USER=user1 \
+MYSQL_PASSWORD=redhat123 \
+MYSQL_DATABASE=items
+```
+
+7.5 Use the oc set volumes command to attach the existing PVC to the deployment.
+
+```
+[student@workstation ~]$ oc set volumes deployment/db-pod --add --type pvc \
+--mount-path /var/lib/mysql \
+--name db-pod-vol \
+--claim-name db-pod-pvc
+
+```
+
+7.6 Create a query-db pod by using the oc run command and the registry.lab.example.com:8443/redhattraining/do180-dbinit:v2 container image. Use the pod to execute a query against the database service.
+
+It takes up to one minute for the command to display the result.
+
+```
+[student@workstation ~]$ oc run query-db -it --rm --image \
+registry.lab.example.com:8443/redhattraining/do180-dbinit:v2 \
+--restart Never \
+-- /bin/bash -c "mariadb -uuser1 -predhat123 --protocol tcp \
+-h db-pod -P3306 items -e 'select * from Item;'"
+...output omitted...
++----+-------------------+------+
+| id | description       | done |
++----+-------------------+------+
+|  1 | Pick up newspaper |    0 |
+|  2 | Buy groceries     |    1 |
++----+-------------------+------+
+pod "query-db" deleted from storage-volumes namespace
+
+```
+
+
+8. Delete the db-pod deployment and the db-pod-pvc PVC.
+
+8.1 Delete the db-pod deployment.
+
+```
+[student@workstation ~]$ oc delete deployment/db-pod
+
+```
+
+8.2 Delete the db-pod-pvc PVC.
+
+
+```
+[student@workstation ~]$ oc delete pvc/db-pod-pvc
+
+```
+
+---
+
+
+
+
 
 
 
