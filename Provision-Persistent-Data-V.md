@@ -173,6 +173,47 @@ https://api.lab.example.com:6443
 
 ```
 
+6.5 Add the init-db-cm configuration map as a volume named init-db-volume to the deployment. Specify the volume type as configmap, and set the /var/db/config directory as the mount path.
+
+```
+[student@workstation ~]$ oc set volumes deployment/db-pod \
+--add --name init-db-volume --type configmap \
+--configmap-name init-db-cm --mount-path /var/db/config
+
+```
+
+6.6 Start a remote shell session inside the container.
+
+```
+[student@workstation ~]$ oc rsh deployment/db-pod
+
+```
+
+6.7 Use the mariadb client to execute the database script in the /var/db/config/init-db volume.
+
+```
+sh-5.2$ mariadb -uuser1 -predhat123 items < /var/db/config/init-db.sql
+
+
+```
+
+6.8 Execute a query to verify the database contents.
+
+
+```
+sh-5.2$ mariadb -uuser1 -predhat123 items -e 'select * from Item;'
++----+-------------------+------+
+| id | description       | done |
++----+-------------------+------+
+|  1 | Pick up newspaper |    0 |
+|  2 | Buy groceries     |    1 |
++----+-------------------+------+
+sh-5.2$
+
+
+```
+
+
 
 
 
