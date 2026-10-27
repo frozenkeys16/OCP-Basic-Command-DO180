@@ -42,6 +42,44 @@ MYSQL_DATABASE	           items
 ---
 
 
+3.5 In the Advanced options section, click Scaling and set the number of replicas to 1.
+3.6 Click Create. Wait for the blue circle to indicate that a single pod is running.
+3.7 Create a service for the database. Go to Networking → Services and click Create Service.
+3.8 Update the resource file with the following values:
+
+**Table 5.6. Service Fields**
+
+```
+**Field name**                   **Value**
+
+Name	                            db-pod
+Selector	                        app: db-pod
+Port	                            3306
+Target                            port	3306
+
+
+```
+
+---
+
+<img width="1031" height="502" alt="image" src="https://github.com/user-attachments/assets/147ec156-dd25-42e5-a562-d7dda9ea7745" />
+
+---
+
+3.9 Click Create.
+
+4. Add to the deployment a 1 GiB, ReadWriteOnce (RWO) PVC named db-pod-pvc. Set the /var/lib/mysql directory as the mount path.
+
+4.1 Go to Workloads → Deployments.
+4.2 Click the vertical ellipsis icon (⋮) in the row for the db-pod deployment, and select Add storage.
+4.3 In the Add Storage form, click Create new claim.
+4.4 Complete the form with the following values:
+
+**Table 5.7. Add PVC Storage Fields**
+
+
+
+
 
 
 
