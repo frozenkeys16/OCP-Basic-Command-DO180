@@ -98,5 +98,99 @@ deployment.apps/db-pod updated
 
 4. Add a 1 Gi, RWO PVC named db-pod-pvc to the deployment. Specify the volume name as lvm-storage, and set the /var/lib/mysql directory as the mount path. Use the lvms-vg1 storage class.
 
+4.1 Use the oc set volume command to create a PVC for the deployment.
+
+```
+[student@workstation ~]$ oc set volumes deployment/db-pod \
+--add --name lvm-storage --type pvc --claim-mode rwo \
+--claim-size 1Gi --mount-path /var/lib/mysql \
+--claim-class lvms-vg1 --claim-name db-pod-pvc
+
+```
+
+The claim-class option specifies a non-default storage class.
+
+
+---
+
+**Note**
+The oc set volumes command does not have an option to set the volume mode property. Thus, the oc set volumes command results in using the default Filesystem volume mode. Use a declarative manifest to set the volume mode to Block. The use of declarative manifests is out of scope for this course.
+
+
+---
+
+
+4.2 Use the oc get pvc command to view the status of the PVC. Identify the name of the PV, and confirm that the PVC uses the lvms-vg1 non-default storage class.
+
+```
+[student@workstation ~]$ oc get pvc
+
+```
+
+4.3 Use the oc describe pvc command to inspect the details of the db-pod-pvc PVC.
+
+```
+[student@workstation ~]$ oc describe pvc db-pod-pvc
+Name:          db-pod-pvc
+Namespace:     storage-classes
+StorageClass:  lvms-vg1
+Status:        Bound
+Volume:        pvc-72084a46-3f32-435e-987b-4ad3b9026021
+Labels:        <none>
+Annotations:   pv.kubernetes.io/bind-completed: yes
+               pv.kubernetes.io/bound-by-controller: yes
+               volume.beta.kubernetes.io/storage-provisioner: topolvm.io
+               volume.kubernetes.io/selected-node: master01
+               volume.kubernetes.io/storage-provisioner: topolvm.io
+Finalizers:    [kubernetes.io/pvc-protection]
+Capacity:      1Gi
+Access Modes:  RWO
+VolumeMode:    Filesystem
+Used By:       db-pod-568888457d-qmxn9
+Events:
+...output omitted...
+
+```
+The Used By attribute confirms that the PVC is bound to a pod.
+
+
+---
+5. Connect to the database to verify that it is working.
+
+```
+[student@workstation ~]$ oc run query-db -it --rm \
+--image registry.lab.example.com:8443/rhel10/mariadb-118 \
+--restart Never --command \
+-- /bin/bash -c "mariadb -uuser1 -predhat123 \
+-h db-pod -P3306 items -e 'show databases;'"
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| items              |
++--------------------+
+pod "query-db" deleted from storage-classes namespace
+
+```
+
+6. Delete the db-pod deployment and the db-pod-pvc PVC.
+
+6.1 Delete the db-pod deployment and service.
+
+```
+[student@workstation ~]$ oc delete deployment db-pod
+deployment.apps "db-pod" deleted from storage-classes namespace
+[student@workstation ~]$ oc delete service db-pod
+
+```
+
+6.2 Verify that the PVC still exists without the deployment.
+
+```
+[student@workstation ~]$ oc get pvc
+
+```
+
+
 
 
