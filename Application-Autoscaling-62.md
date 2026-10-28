@@ -191,6 +191,77 @@ loadtest-667bdcdc99-z5n9q   1/1     Running   0          43s
 
 ```
 
+Press Ctrl+C to end the watch command after the pods display Running in the STATUS column.
+
+5.3 Scale down the loadtest deployment back to one pod.
+
+```
+[student@workstation ~]$ oc scale deployment/loadtest --replicas 1
+
+```
+
+
+5.4 Run the watch oc get pods command and wait until only one pod is running. The name of the pod is different in your cluster.
+
+```
+[student@workstation ~]$ watch oc get pods
+
+```
+
+Press Ctrl+C to end the watch command after the pod displays Running in the STATUS column.
+
+6. Configure an HPA resource for the loadtest deployment. Set the minimum number of replicas to 2 and the maximum to 20. Set the average CPU usage to 50% of the CPU request attribute.
+
+6.1 Use the oc autoscale command to create the HPA resource.
+
+```
+
+[student@workstation ~]$ oc autoscale deployment/loadtest --min 2 --max 20 \
+--cpu 50%
+
+```
+
+6.2 Run the watch command to monitor the oc get hpa loadtest command. Wait up to five minutes for the loadtest HPA to report usage in the TARGETS column.
+
+Notice that the HPA scales up the deployment to two replicas, to conform with the minimum number of pods that you configured.
+
+```
+[student@workstation ~]$ watch oc get hpa loadtest
+
+```
+
+Leave the command running, and do not interrupt it.
+
+
+7. Increase the CPU usage by sending requests to the loadtest application API.
+
+7.1 Open a second terminal window and use the oc get route command to retrieve the URL of the application.
+
+```
+[student@workstation ~]$ oc get route loadtest
+
+```
+
+7.2 Send a request to the application API to simulate additional CPU pressure on the container. Do not wait for the curl command to complete, and continue with the exercise. After one minute, the command reports a timeout error that you can ignore.
+
+```
+[student@workstation ~]$ curl \
+loadtest-reliability-autoscaling.apps.lab.example.com/api/loadtest/v1/cpu/1
+
+```
+
+7.3 Watch the output of the oc get hpa loadtest command. After a minute, the HPA detects an increase in the CPU usage and deploys additional pods.
+
+---
+
+**Note**
+The increased activity of the application does not immediately trigger the autoscaler. Wait a few moments if you do not see any changes to the number of replicas.
+
+You might need to run the curl command multiple times before the application uses enough CPU to trigger the autoscaler.
+
+---
+
+The CPU usage and the number of replicas on your system probably differ.
 
 
 
