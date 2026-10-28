@@ -264,4 +264,28 @@ You might need to run the curl command multiple times before the application use
 The CPU usage and the number of replicas on your system probably differ.
 
 
+```
+[student@workstation ~]$ watch oc get hpa loadtest
+
+```
+
+7.4 After five minutes, the application in the pod stops consuming CPU resources. The CPU load decreases.
+
+---
+**Note**
+Although the HPA resource can be quick to scale up, it is slower to scale down.
+
+---
+
+7.5 Press Ctrl+C to quit the watch command from the first terminal window, and close the second terminal window.
+
+---
+
+
+
+
+
+
+
+
 
