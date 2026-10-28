@@ -74,6 +74,104 @@ Press Ctrl+C to end the script after the application displays the Ok message.
 
 
 
+3. When the longload application scales up, your customers complain that some requests fail. To replicate the issue, manually scale up the longload application to three replicas, and run the ~/DO180/labs/reliability-review/curl_loop.sh script at the same time.
+
+The application takes seven seconds to initialize. The application exposes the /health API endpoint on HTTP port 3000. Configure the longload deployment to use this endpoint, to ensure that the application is ready before serving client requests.
+
+3.1 Open a second terminal window and run the ~/DO180/labs/reliability-review/curl_loop.sh script.
+
+```
+[student@workstation ~]$ ~/DO180/labs/reliability-review/curl_loop.sh
+
+```
+Leave the script running and do not interrupt it.
+
+
+3.2 In the first terminal window, scale up the longload application to three replicas.
+
+```
+[student@workstation ~]$ oc scale deployment/longload --replicas 3
+
+```
+3.3 Switch back to the second terminal, and watch the output of the curl_loop.sh script. Some requests fail because OpenShift sends requests to the new pods before the application is ready.
+
+```
+22 longload-5897c9558f-cx4gt: Ok
+23 longload-5897c9558f-cx4gt: Ok
+24 longload-5897c9558f-cx4gt: Ok
+25 curl: (7) Failed to connect to master01.lab.example.com port 30372 after 4 ms: Could not connect to server
+26 curl: (7) Failed to connect to master01.lab.example.com port 30372 after 5 ms: Could not connect to server
+27 longload-5897c9558f-cx4gt: Ok
+28 curl: (7) Failed to connect to master01.lab.example.com port 30372 after 4 ms: Could not connect to server
+29 longload-5897c9558f-cx4gt: Ok
+30 curl: (7) Failed to connect to master01.lab.example.com port 30372 after 4 ms: Could not connect to server
+31 longload-5897c9558f-tpssf: app is still starting
+32 longload-5897c9558f-kkvm5: app is still starting
+33 longload-5897c9558f-cx4gt: Ok
+34 longload-5897c9558f-tpssf: app is still starting
+35 longload-5897c9558f-tpssf: app is still starting
+36 longload-5897c9558f-tpssf: app is still starting
+37 longload-5897c9558f-cx4gt: Ok
+38 longload-5897c9558f-tpssf: app is still starting
+39 longload-5897c9558f-cx4gt: Ok
+40 longload-5897c9558f-cx4gt: Ok
+
+```
+Leave the script running and do not interrupt it.
+
+3.4 In the first terminal window, add a readiness probe to the longload deployment.
+
+```
+[student@workstation ~]$ oc set probe deployment/longload --readiness \
+--initial-delay-seconds 7 \
+--get-url http://:3000/health
+
+```
+3.5 Scale down the longload application back to one pod.
+
+```
+[student@workstation ~]$ oc scale deployment/longload --replicas 1
+
+```
+If scaling down breaks the curl_loop.sh script, then press Ctrl+C to stop the script in the second terminal. Then, restart the script.
+
+3.6 To test your work, scale up the application to three replicas again.
+
+```
+[student@workstation ~]$ oc scale deployment/longload --replicas 3
+
+```
+
+3.7 Watch the output of the curl_loop.sh script in the second terminal, and observe that no requests fail.
+
+```
+92 longload-7ddcc9b7fd-72dtm: Ok
+93 longload-7ddcc9b7fd-72dtm: Ok
+94 longload-7ddcc9b7fd-72dtm: Ok
+95 longload-7ddcc9b7fd-qln95: Ok
+96 longload-7ddcc9b7fd-wrxrb: Ok
+97 longload-7ddcc9b7fd-qln95: Ok
+98 longload-7ddcc9b7fd-wrxrb: Ok
+99 longload-7ddcc9b7fd-72dtm: Ok
+
+```
+Press Ctrl+C to end the script. Do not close the second terminal window.
+
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
