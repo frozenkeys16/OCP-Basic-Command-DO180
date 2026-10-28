@@ -174,6 +174,223 @@ exit
 
 ---
 
+5. Log in as the developer user and deploy another application by using the SHA ID of the image as the digest.
+
+5.1 Log in to the OpenShift cluster as the developer user with developer as the password.
+
+```
+[student@workstation ~]$ oc login -u developer -p developer \
+https://api.lab.example.com:6443
+
+```
+5.2 Use the oc image info command to retrieve the SHA ID of the image version that the 1-209 tag references. Specify the JSON format for the command output. Parse the JSON output with the jq -r command to retrieve the value of the .digest object.
+
+```
+[student@workstation ~]$ oc image info \
+registry.lab.example.com:8443/ubi8/httpd-24:1-209 -o json | \
+jq -r .digest
+
+```
+
+5.3 Export the SHA ID from the previous substep as the $IMAGE environment variable and display the value of the variable.
+
+```
+[student@workstation ~]$ IMAGE=sha256:b1e3...f876 && echo $IMAGE
+
+```
+
+5.4 Use the oc create deployment command to deploy the application. Set the name of the deployment to httpd2.
+
+```
+[student@workstation ~]$ oc create deployment httpd2 \
+--image registry.lab.example.com:8443/ubi8/httpd-24@$IMAGE
+
+```
+5.5 Confirm that the new deployment refers to the image version by its SHA ID.
+
+```
+[student@workstation ~]$ oc get deployment httpd2 -o wide
+
+```
+
+6. Update the httpd2 application by using a more recent image version.
+
+6.1 In the httpd2 deployment, update the httpd-24 container to use the image version that the 1-215 tag references.
+
+```
+[student@workstation ~]$ oc set image deployment/httpd2 \
+httpd-24=registry.lab.example.com:8443/ubi8/httpd-24:1-215
+
+```
+
+6.2 Confirm that the deployment refers to the new image version.
+
+```
+[student@workstation ~]$ oc get deployment httpd2 -o wide
+
+```
+
+6.3 Confirm that the deployment finished redeploying the pod. You might have to rerun the command several times for the pod to report a Running status. The pod names might differ on your cluster.
+
+```
+[student@workstation ~]$ oc get pods
+
+```
+
+6.4 Inspect the pod to confirm that the container is using the new image. Replace the pod name with your own pod from the previous step.
+
+```
+[student@workstation ~]$ oc get pod httpd2-998d9b9b9-5859j \
+-o jsonpath='{.spec.containers[0].image}{"\n"}'
+
+```
+7. Add the latest tag to the image version that the 1-209 tag already references. Deploy an application from the image with the latest tag.
+
+7.1 Use the skopeo login command to log in to the classroom container registry as the developer user with developer as the password.
+
+```
+[student@workstation ~]$ skopeo login -u developer -p developer \
+registry.lab.example.com:8443
+
+```
+7.2 Use the skopeo copy command to add the latest tag to the image.
+
+```
+[student@workstation ~]$ skopeo copy \
+docker://registry.lab.example.com:8443/ubi8/httpd-24:1-209 \
+docker://registry.lab.example.com:8443/ubi8/httpd-24:latest
+
+```
+
+7.3 Use the oc image info command to confirm that both tags refer to the same image. The two commands report the same SHA image ID, which indicates that the tags point to the same image version.
+
+```
+[student@workstation ~]$ oc image info \
+registry.lab.example.com:8443/ubi8/httpd-24:1-209 | head
+
+```
+
+```
+[student@workstation ~]$ oc image info \
+registry.lab.example.com:8443/ubi8/httpd-24:latest | head
+
+```
+
+7.4 Use the oc create deployment command to deploy another application. Set the name of the deployment to httpd3. To confirm that by default the command selects the latest tag, do not provide the tag part in the image name.
+
+```
+[student@workstation ~]$ oc create deployment httpd3 \
+--image registry.lab.example.com:8443/ubi8/httpd-24
+
+```
+
+7.5 Confirm that the pod is running. You might have to rerun the command several times for the pod to report the Running status. The pod names might differ on your cluster.
+
+```
+[student@workstation ~]$ oc get pods
+
+```
+7.6 Confirm that the pod is using the expected image. Notice that the SHA image ID corresponds to the image that the 1-209 tag references. You retrieved that SHA image ID in a preceding step when you ran the oc image info command.
+
+```
+[student@workstation ~]$ oc describe pod httpd3-85b978d758-fvqdr | \
+grep ID
+
+```
+
+8. Assign the latest tag to a different image version. This operation simulates a developer who pushes a new version of an image and assigns the latest tag to that new image version.
+
+8.1 Use the skopeo copy command to add the latest tag to the image version that the 1-215 tag already references. The command automatically removes the latest tag from the earlier image.
+
+
+```
+[student@workstation ~]$ skopeo copy \
+docker://registry.lab.example.com:8443/ubi8/httpd-24:1-215 \
+docker://registry.lab.example.com:8443/ubi8/httpd-24:latest
+
+```
+
+8.2 Log out of the classroom container registry.
+
+```
+[student@workstation ~]$ skopeo logout registry.lab.example.com:8443
+
+```
+
+---
+
+**Note**
+The skopeo logout command logs out of a specified registry server by deleting the cached credentials in the ${XDG_RUNTIME_DIR}/containers/auth.json file.
+
+Red Hat recommends removing cached credentials that are no longer required.
+
+
+---
+
+8.3 Even though the latest tag is now referencing a different image version, OpenShift does not redeploy the pods that are running with the previous image version.
+
+Rerun the oc describe pod command to confirm that the pod still uses the preceding image.
+
+```
+[student@workstation ~]$ oc describe pod httpd3-85b978d758-fvqdr | \
+grep ID
+
+```
+
+9. Scale the httpd3 deployment to two pods.
+
+9.1 Use the oc scale command to add a new pod to the deployment.
+
+```
+[student@workstation ~]$ oc scale deployment/httpd3 --replicas 2
+
+```
+9.2 List the pods to confirm that two pods are running for the httpd3 deployment. The pod names might differ on your cluster.
+
+```
+[student@workstation ~]$ oc get pods
+
+```
+9.3 Retrieve the SHA image ID for the pod that the deployment initially created. The ID did not change. The container is still using the original image version.
+
+```
+[student@workstation ~]$ oc describe pod httpd3-85b978d758-fvqdr | \
+grep ID
+
+```
+9.4 Retrieve the SHA image ID for the additional pod. Notice that the ID is different. The additional pod is using the image that the latest tag is currently referencing.
+
+```
+[student@workstation ~]$ oc describe pod httpd3-85b978d758-f98jh | \
+grep ID
+```
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
