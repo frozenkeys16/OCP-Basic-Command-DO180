@@ -107,5 +107,90 @@ Events:
   Warning  FailedGetResourceMetric   2m24s   horizontal-pod-autoscaler   failed to get cpu utilization: missing request for cpu in container loadtest of Pod loadtest-86d987b9bf-w66x9
 ```
 
+3.4 Delete the HPA resource.
+
+```
+[student@workstation ~]$ oc delete hpa loadtest
+
+```
+
+3.5 Delete the loadtest application.
+
+```
+[student@workstation ~]$ oc delete -f \
+~/DO180/labs/reliability-autoscaling/loadtest.yml
+
+```
+
+---
+
+4. Add a CPU resource section to the ~/DO180/labs/reliability-autoscaling/loadtest.yml file. Redeploy the application from the file.
+
+4.1 Edit the ~/DO180/labs/reliability-autoscaling/loadtest.yml file, and configure the CPU limits and requests for the loadtest deployment. The pod needs 25 millicores to operate, and must not consume more that 100 millicores.
+
+You can compare your work with the completed ~/DO180/solutions/reliability-autoscaling/loadtest.yml file that the lab command prepared.
+
+
+```
+...output omitted...
+        spec:
+          containers:
+          - image: registry.lab.example.com:8443/redhattraining/loadtest:v1.0
+            name: loadtest
+            readinessProbe:
+              failureThreshold: 3
+              httpGet:
+                path: /api/loadtest/v1/healthz
+                port: 8080
+                scheme: HTTP
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 1
+            resources:
+              requests:
+                cpu: 25m
+              limits:
+                cpu: 100m
+
+```
+
+4.2 Use the oc apply -f command to deploy the application from the file.
+
+```
+[student@workstation ~]$ oc apply -f \
+~/DO180/labs/reliability-autoscaling/loadtest.yml
+
+```
+4.3 Run the watch oc get pods command and wait until the pod is running. The name of the pod is different in your cluster.
+
+```
+[student@workstation ~]$ watch oc get pods
+
+```
+Press Ctrl+C to end the watch command after the pod displays Running in the STATUS column.
+
+5. Manually scale the loadtest deployment by first increasing and then decreasing the number of running pods.
+
+5.1 Scale up the loadtest deployment to five pods.
+
+```
+[student@workstation ~]$ oc scale deployment/loadtest --replicas 5
+
+```
+5.2 Run the watch oc get pods command and wait until the five pods are running. The names of the pods are different in your cluster.
+
+```
+[student@workstation ~]$ watch oc get pods
+...output omitted...
+NAME                        READY   STATUS    RESTARTS   AGE
+loadtest-667bdcdc99-5fcvh   1/1     Running   0          43s
+loadtest-667bdcdc99-dpspr   1/1     Running   0          42s
+loadtest-667bdcdc99-hkssk   1/1     Running   0          43s
+loadtest-667bdcdc99-vhc9x   1/1     Running   0          8m11s
+loadtest-667bdcdc99-z5n9q   1/1     Running   0          43s
+
+```
+
+
 
 
