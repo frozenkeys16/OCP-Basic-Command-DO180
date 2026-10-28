@@ -160,6 +160,103 @@ Press Ctrl+C to end the script. Do not close the second terminal window.
 
 ---
 
+4. Configure the longload application so that it automatically scales up when the average memory usage is above 60% of the memory requests value, and scales down when the usage is below this percentage. The minimum number of replicas must be one, and the maximum must be three. The resource that you create for scaling the application must be named longload.
+
+The lab command provides the ~/DO180/labs/reliability-review/hpa.yaml resource file as an example. Use the oc explain command to learn the valid parameters for the hpa.spec.metrics.resource.target attribute. Because the file is incomplete, you must update it first if you choose to use it.
+
+To test your work, use the oc exec deploy/longload -- curl localhost:3000/leak command to send an HTTP request to the application /﻿leak API endpoint. Each request consumes an additional 480 MiB of memory. To free this memory, you can use the ~/DO180/labs/reliability-review/free.sh script.
+
+4.1 Before you create the horizontal pod autoscaler resource, scale down the application to one pod.
+
+```
+[student@workstation ~]$ oc scale deployment/longload --replicas 1
+
+```
+
+4.2 Edit the ~/DO180/labs/reliability-review/hpa.yaml resource file. You can retrieve the parameters for the resource attribute by using the oc explain hpa.spec.metrics.resource and oc explain hpa.spec.metrics.resource.target commands.
+
+```
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: longload
+  labels:
+    app: longload
+spec:
+  maxReplicas: 3
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: longload
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 60
+
+```
+
+4.3 Use the oc apply command to deploy the horizontal pod autoscaler.
+
+```
+[student@workstation ~]$ oc apply -f ~/DO180/labs/reliability-review/hpa.yaml
+
+```
+4.4 In the second terminal, run the watch command to monitor the oc get hpa longload command. Wait for the longload horizontal pod autoscaler to report usage in the TARGETS column. The percentages might be different in your cluster.
+
+```
+[student@workstation ~]$ watch oc get hpa longload
+
+```
+
+Leave the command running and do not interrupt it.
+
+4.5 To test your work, run the oc exec deploy/longload — curl localhost:3000/leak command in the first terminal for the application to allocate 480 MiB of memory.
+
+```
+[student@workstation ~]$ oc exec deploy/longload -- curl -s localhost:3000/leak
+
+```
+
+4.6 In the second terminal, after a few seconds, observe that the oc get hpa longload command shows the memory increase. The horizontal pod autoscaler scales up the application to more than one replica. The percentages might be different in your cluster.
+
+```
+NAME       REFERENCE             TARGETS             MINPODS   MAXPODS   REPLICAS   AGE
+longload   Deployment/longload   memory: 145%/60%    1         3         3          5m18s
+
+```
+
+4.7 To test your work, run the ~/DO180/labs/reliability-review/free.sh script in the first terminal for the application to release the memory. Because the service load balances requests across the replicas, run the script multiple times to ensure that the request reaches the pod that consumed the memory.
+
+```
+[student@workstation ~]$ for i in {1..5}; \
+do ~/DO180/labs/reliability-review/free.sh; done
+
+```
+4.8 In the second terminal, after ten minutes, observe that the oc get hpa longload command shows the memory decrease. The horizontal pod autoscaler scales down the application to one replica. The percentages might be different in your cluster.
+
+
+```
+NAME       REFERENCE             TARGETS            MINPODS   MAXPODS   REPLICAS   AGE
+longload   Deployment/longload   memory: 12%/60%    1         3         1          15m28s
+
+```
+Press Ctrl+C to end the watch command. Close the second terminal window.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
